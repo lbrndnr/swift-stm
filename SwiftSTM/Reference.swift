@@ -9,13 +9,6 @@
 import Foundation
 import Atomics
 
-precedencegroup ReferencePriorityPrecedence {
-    lowerThan: ComparisonPrecedence
-    higherThan: AssignmentPrecedence
-}
-
-public typealias TInt = Ref<Int>
-
 public typealias Ref<V: Hashable> = Reference<V>
 
 public final class Reference<V: Hashable> {

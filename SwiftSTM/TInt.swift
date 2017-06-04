@@ -8,6 +8,8 @@
 
 import Foundation
 
+public typealias TInt = Ref<Int>
+
 //@discardableResult public func =|(lhs: inout Ref<Int>, rhs: Int) -> Ref<Int> {
 //    lhs.set(rhs)
 //    return lhs

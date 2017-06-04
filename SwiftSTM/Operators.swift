@@ -8,7 +8,12 @@
 
 import Foundation
 
-//infix operator =| : ReferencePriorityPrecedence
+precedencegroup ReferencePrecedence {
+    lowerThan: ComparisonPrecedence
+    higherThan: AssignmentPrecedence
+}
+
+//infix operator =| : ReferencePrecedence
 
 //@discardableResult public func =|<V>(lhs: inout Ref<V>, rhs: Ref<V>) -> Ref<V> {
 //    lhs.set(rhs.get())
