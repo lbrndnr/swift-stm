@@ -11,6 +11,9 @@
 		496E34B91EE4026800202340 /* Atomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496E34B81EE4026800202340 /* Atomics.framework */; };
 		496E34BD1EE40A1200202340 /* TInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E34BC1EE40A1200202340 /* TInt.swift */; };
 		496E34BF1EE40E0000202340 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E34BE1EE40E0000202340 /* Operators.swift */; };
+		496E34C11EE4199900202340 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E34C01EE4199900202340 /* Error.swift */; };
+		496E34C31EE4241100202340 /* Barrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E34C21EE4241100202340 /* Barrier.swift */; };
+		496E34C81EE4247600202340 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E34C71EE4247600202340 /* Thread.swift */; };
 		49A0E1181EDCAA5B00B5D7B2 /* SwiftSTM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49A0E10E1EDCAA5B00B5D7B2 /* SwiftSTM.framework */; };
 		49A0E11D1EDCAA5B00B5D7B2 /* SwiftSTMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0E11C1EDCAA5B00B5D7B2 /* SwiftSTMTests.swift */; };
 		49A0E11F1EDCAA5B00B5D7B2 /* SwiftSTM.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A0E1111EDCAA5B00B5D7B2 /* SwiftSTM.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -34,6 +37,9 @@
 		496E34B81EE4026800202340 /* Atomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Atomics.framework; path = Carthage/Build/iOS/Atomics.framework; sourceTree = SOURCE_ROOT; };
 		496E34BC1EE40A1200202340 /* TInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TInt.swift; sourceTree = "<group>"; };
 		496E34BE1EE40E0000202340 /* Operators.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
+		496E34C01EE4199900202340 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		496E34C21EE4241100202340 /* Barrier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Barrier.swift; sourceTree = "<group>"; };
+		496E34C71EE4247600202340 /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
 		49A0E10E1EDCAA5B00B5D7B2 /* SwiftSTM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftSTM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49A0E1111EDCAA5B00B5D7B2 /* SwiftSTM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftSTM.h; sourceTree = "<group>"; };
 		49A0E1121EDCAA5B00B5D7B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -82,6 +88,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		496E34C41EE4245B00202340 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				496E34C71EE4247600202340 /* Thread.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		49A0E1041EDCAA5B00B5D7B2 = {
 			isa = PBXGroup;
 			children = (
@@ -103,10 +117,13 @@
 		49A0E1101EDCAA5B00B5D7B2 /* SwiftSTM */ = {
 			isa = PBXGroup;
 			children = (
+				496E34C01EE4199900202340 /* Error.swift */,
 				490F748D1EDEF4B7001BA423 /* Transaction.swift */,
+				496E34C21EE4241100202340 /* Barrier.swift */,
 				49A0E12E1EDCB20600B5D7B2 /* Reference.swift */,
 				496E34BE1EE40E0000202340 /* Operators.swift */,
 				496E34BC1EE40A1200202340 /* TInt.swift */,
+				496E34C41EE4245B00202340 /* Helpers */,
 				496E34B71EE4025C00202340 /* Frameworks */,
 				496E34B61EE4025200202340 /* Supporting Files */,
 			);
@@ -259,7 +276,10 @@
 				490F748E1EDEF4B7001BA423 /* Transaction.swift in Sources */,
 				496E34BF1EE40E0000202340 /* Operators.swift in Sources */,
 				496E34BD1EE40A1200202340 /* TInt.swift in Sources */,
+				496E34C11EE4199900202340 /* Error.swift in Sources */,
 				49A0E12F1EDCB20600B5D7B2 /* Reference.swift in Sources */,
+				496E34C81EE4247600202340 /* Thread.swift in Sources */,
+				496E34C31EE4241100202340 /* Barrier.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

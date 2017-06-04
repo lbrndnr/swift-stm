@@ -28,8 +28,6 @@ public final class Reference<V: Hashable> {
         return Thread.current.barrier
     }
     
-    var conflicting = false
-    
     // MARK: - Initialization
     
     public init(_ value: V) {
@@ -38,10 +36,10 @@ public final class Reference<V: Hashable> {
     
     // MARK: -
     
-    private func log() {
+    private func log() throws {
         if firstBarrierHash.value == 0 {
-            if !conflicting && firstBarrierHash.value != threadBarrier?.hashValue {
-                conflicting = true
+            if firstBarrierHash.value != threadBarrier?.hashValue {
+                throw TransactionError.conflict
             }
         }
         else if let threadBarrier = threadBarrier {
@@ -49,16 +47,16 @@ public final class Reference<V: Hashable> {
         }
     }
     
-    public func get() -> V {
-        log()
+    public func get() throws -> V {
         threadBarrier?.readReferences.update(with: self)
+        try log()
         
         return value
     }
     
-    public func set(_ val: V) {
-        log()
+    public func set(_ val: V) throws {
         threadBarrier?.writtenReferences.update(with: self)
+        try log()
         
         newValue = val
     }
@@ -70,13 +68,11 @@ public final class Reference<V: Hashable> {
         
         value = val
         newValue = nil
-        conflicting = false
         firstBarrierHash.store(0)
     }
     
     func rollback() {
         newValue = nil
-        conflicting = false
         firstBarrierHash.store(0)
     }
     

@@ -16,7 +16,10 @@ class Bank {
     var totalValue: Int {
         var res = 0
         atomic {
-            res = self.accounts.reduce(0) { $0 + $1.balance.get() }
+            res = self.accounts.reduce(0) { i, acc in
+                let v = try? acc.balance.get()
+                return i + (v ?? 0)
+            }
         }
         
         return res
@@ -34,14 +37,14 @@ class Bank {
         var res = false
         
         atomic {
-            let l = from.balance
+            let l = try from.balance.get()
             
             guard l >= amount else {
                 return
             }
             
-            from.balance =| l - amount
-            to.balance =| to.balance + amount
+            try from.balance.set(l - amount)
+            try to.balance.set(to.balance.get() + amount)
             
             res = true
         }
