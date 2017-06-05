@@ -11,12 +11,16 @@ import Foundation
 class Barrier {
     
     fileprivate let identifier: String
-    var transaction: Transaction?
+    var transaction: Transaction? {
+        didSet {
+            backoff = BackoffIterator()
+        }
+    }
     
-    var readReferences = Set<AnyHashable>()
-    var writtenReferences = Set<AnyHashable>()
+    fileprivate var readReferences = Set<Signature>()
+    fileprivate var writtenReferences = Set<Signature>()
     
-    var overlappingThreads = Set<Thread>()
+    private var backoff = BackoffIterator()
     
     // MARK: - Initialization
     
@@ -26,6 +30,17 @@ class Barrier {
     
     // MARK: -
     
+    func markAsRead(signature: Signature) {
+        if !writtenReferences.contains(signature) {
+            readReferences.update(with: signature)
+        }
+    }
+    
+    func markAsWritten(signature: Signature) {
+        writtenReferences.update(with: signature)
+        readReferences.remove(signature)
+    }
+    
     func execute() {
         guard let transaction = transaction else {
             return
@@ -34,41 +49,34 @@ class Barrier {
         do {
             try transaction()
             
-            writtenReferences.forEach { p in
-                guard let ref = p.base as? Ref<Int> else {
-                    return
-                }
-                
-                ref.commit()
-            }
+            writtenReferences.forEach { $0.reference?.commit() }
+            readReferences.forEach { $0.reference?.rollback() }
         }
         catch TransactionError.conflict {
-            writtenReferences.forEach { p in
-                guard let ref = p.base as? Ref<Int> else {
-                    return
-                }
-                
-                ref.rollback()
+            writtenReferences.forEach { $0.reference?.rollback() }
+            readReferences.forEach { $0.reference?.rollback() }
+            
+            if let time = backoff.next() {
+                retry(in: time)
             }
         }
         catch (let error) {
-            
+            print(error)
         }
         defer {
             writtenReferences.removeAll()
             readReferences.removeAll()
-            overlappingThreads.removeAll()
         }
     }
     
     func retry(in time: TimeInterval? = nil) {
-        //        if let time = time {
-        //            let delay = DispatchTime.now() + time
-        //            DispatchQueue.
-        //        }
-        //        else {
-        //            execute()
-        //        }
+        if let time = time {
+            print("go to sleep \(identifier) for \(time) at \(Date())")
+            Thread.sleep(forTimeInterval: time)
+            print("good morning \(identifier) at \(Date())")
+        }
+        
+        execute()
     }
     
 }

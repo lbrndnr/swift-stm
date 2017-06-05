@@ -11,7 +11,7 @@ import XCTest
 
 private let amount = 1
 private let initialBalance = 100_000
-private let accounts = 10_000
+private let accounts = 100
 private let transactions = 2_00_000
 
 class SwiftSTMTests: XCTestCase {
@@ -25,13 +25,15 @@ class SwiftSTMTests: XCTestCase {
         let accs = (0 ..< accounts).map { Account(ID: $0, balance: initialBalance) }
         
         bank = Bank(accounts: accs)
-        sum = bank.totalValue
+        sum = accounts * initialBalance
     }
     
     private func doTransactions() {
-        (0 ..< transactions).forEach { _ in
+        (0 ..< transactions).forEach { i in
             let fromID = Int(arc4random_uniform(UInt32(accounts)))
             let toID = Int(arc4random_uniform(UInt32(accounts)))
+            
+//            print(fromID, toID)
             
             let from = bank.accounts[fromID]
             let to = bank.accounts[toID]

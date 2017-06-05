@@ -33,7 +33,7 @@ class Bank {
     
     // MARK: - Money
     
-    func transfer(from: Account, to: Account, amount: Int) -> Bool {
+    @discardableResult func transfer(from: Account, to: Account, amount: Int) -> Bool {
         var res = false
         
         atomic {

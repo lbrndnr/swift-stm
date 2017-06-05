@@ -9,9 +9,18 @@
 import Foundation
 import Atomics
 
-public typealias Ref<V: Hashable> = Reference<V>
+protocol Referenceable: AnyObject {
+    
+    func commit()
+    func rollback()
+    
+}
 
-public final class Reference<V: Hashable> {
+public typealias Ref<V: Any> = Reference<V>
+
+public final class Reference<V> : Referenceable {
+    
+    var signature = Signature()
     
     fileprivate var value: V
     fileprivate var newValue: V?
@@ -21,35 +30,39 @@ public final class Reference<V: Hashable> {
         return Thread.current.barrier
     }
     
+    public var debugInfo: Any?
+    
     // MARK: - Initialization
     
     public init(_ value: V) {
         self.value = value
+        self.signature.reference = self
     }
     
     // MARK: -
     
     private func log() throws {
-        if firstBarrierHash.value == 0 {
-            if firstBarrierHash.value != threadBarrier?.hashValue {
-                throw TransactionError.conflict
-            }
+        guard let threadBarrier = threadBarrier else {
+            throw TransactionError.noBarrier
         }
-        else if let threadBarrier = threadBarrier {
-            firstBarrierHash.CAS(current: 0, future: threadBarrier.hashValue)
+        
+        if firstBarrierHash.load() != threadBarrier.hashValue && !firstBarrierHash.CAS(current: 0, future: threadBarrier.hashValue) {
+            throw TransactionError.conflict
         }
     }
     
     public func get() throws -> V {
-        threadBarrier?.readReferences.update(with: self)
         try log()
+        threadBarrier?.markAsRead(signature: signature)
         
         return value
     }
     
     public func set(_ val: V) throws {
-        threadBarrier?.writtenReferences.update(with: self)
+//        print("set \(self) on \(String(describing: threadBarrier?.hashValue))")
+        
         try log()
+        threadBarrier?.markAsWritten(signature: signature)
         
         newValue = val
     }
@@ -59,26 +72,25 @@ public final class Reference<V: Hashable> {
             return
         }
         
+//        print("commit \(self) on \(String(describing: threadBarrier?.hashValue))")
+        
         value = val
         newValue = nil
         firstBarrierHash.store(0)
     }
     
     func rollback() {
+//        print("rollback \(self) on \(String(describing: threadBarrier?.hashValue))")
+        
         newValue = nil
         firstBarrierHash.store(0)
     }
     
 }
 
-extension Reference: Hashable {
+extension Reference: CustomDebugStringConvertible {
     
-    public var hashValue: Int {
-        return value.hashValue
+    public var debugDescription: String {
+        return "Reference(value: \(value), info:\(debugInfo ?? ""))"
     }
-    
-}
-
-public func ==<V: Equatable>(lhs: Reference<V>, rhs: Reference<V>) -> Bool {
-    return lhs.value == rhs.value
 }

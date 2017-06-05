@@ -11,4 +11,5 @@ import Foundation
 enum TransactionError: Error {
     case conflict
     case aborted
+    case noBarrier
 }
