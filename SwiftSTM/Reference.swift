@@ -55,7 +55,7 @@ public final class Reference<V> : Referenceable {
         try log()
         threadBarrier?.markAsRead(signature: signature)
         
-        return value
+        return newValue ?? value
     }
     
     public func set(_ val: V) throws {
