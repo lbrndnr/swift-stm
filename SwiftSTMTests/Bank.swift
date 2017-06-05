@@ -37,13 +37,13 @@ class Bank {
         var res = false
         
         atomic {
-            let l = try from.balance.get()
+            let l = from.balance
             
-            guard l >= amount else {
+            guard try l >= amount else {
                 return
             }
             
-            try from.balance.set(l - amount)
+            try from.balance.set(l.get() - amount)
             try to.balance.set(to.balance.get() + amount)
             
             res = true

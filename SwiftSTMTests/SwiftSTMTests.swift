@@ -33,7 +33,7 @@ class SwiftSTMTests: XCTestCase {
             let fromID = Int(arc4random_uniform(UInt32(accounts)))
             let toID = Int(arc4random_uniform(UInt32(accounts)))
             
-//            print(fromID, toID)
+            print(fromID, toID)
             
             let from = bank.accounts[fromID]
             let to = bank.accounts[toID]

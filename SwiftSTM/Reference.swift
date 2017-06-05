@@ -16,7 +16,7 @@ protocol Referenceable: AnyObject {
     
 }
 
-public typealias Ref<V: Any> = Reference<V>
+public typealias Ref<V> = Reference<V>
 
 public final class Reference<V> : Referenceable {
     
@@ -59,7 +59,7 @@ public final class Reference<V> : Referenceable {
     }
     
     public func set(_ val: V) throws {
-//        print("set \(self) on \(String(describing: threadBarrier?.hashValue))")
+        print("set \(self) on \(String(describing: threadBarrier?.hashValue))")
         
         try log()
         threadBarrier?.markAsWritten(signature: signature)
@@ -72,7 +72,7 @@ public final class Reference<V> : Referenceable {
             return
         }
         
-//        print("commit \(self) on \(String(describing: threadBarrier?.hashValue))")
+        print("commit \(self) on \(String(describing: threadBarrier?.hashValue))")
         
         value = val
         newValue = nil
@@ -80,7 +80,7 @@ public final class Reference<V> : Referenceable {
     }
     
     func rollback() {
-//        print("rollback \(self) on \(String(describing: threadBarrier?.hashValue))")
+        print("rollback \(self) on \(String(describing: threadBarrier?.hashValue))")
         
         newValue = nil
         firstBarrierHash.store(0)
