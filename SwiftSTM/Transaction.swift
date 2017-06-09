@@ -11,11 +11,16 @@ import Foundation
 public typealias Transaction = () throws -> ()
 
 public func atomic(transaction: @escaping Transaction) {
+    let thread = Thread.current
+    
     if Thread.current.barrier == nil {
-        Thread.current.barrier = Barrier()
+        let barrier = Barrier()
+        barrier.thread = thread
+        
+        thread.barrier = barrier
     }
     
-    let barrier = Thread.current.barrier!
+    let barrier = thread.barrier!
     barrier.transaction = transaction
     barrier.execute()
 }

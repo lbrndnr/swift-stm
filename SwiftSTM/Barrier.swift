@@ -10,6 +10,8 @@ import Foundation
 
 class Barrier {
     
+    weak var thread: Thread?
+    
     fileprivate let identifier: String
     var transaction: Transaction? {
         didSet {
@@ -49,12 +51,17 @@ class Barrier {
         do {
             try transaction()
             
+            let readCollision = readReferences.contains { !($0.reference?.verifyReadAccess(from: self) ?? true) }
+            let writeCollision = writtenReferences.contains { !($0.reference?.verifyWriteAccess(from: self) ?? true) }
+            
+            if readCollision || writeCollision {
+                throw TransactionError.collision
+            }
+            
             writtenReferences.forEach { $0.reference?.commit() }
-            readReferences.forEach { $0.reference?.rollback() }
         }
-        catch TransactionError.conflict {
+        catch TransactionError.collision {
             writtenReferences.forEach { $0.reference?.rollback() }
-            readReferences.forEach { $0.reference?.rollback() }
             
             if let time = backoff.next() {
                 retry(in: time)

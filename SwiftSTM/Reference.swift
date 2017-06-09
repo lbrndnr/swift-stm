@@ -11,8 +11,11 @@ import Atomics
 
 protocol Referenceable: AnyObject {
     
-    func commit()
-    func rollback()
+    @discardableResult func commit() -> Bool
+    @discardableResult func rollback() -> Bool
+    
+    func verifyReadAccess(from barrier: Barrier) -> Bool
+    func verifyWriteAccess(from barrier: Barrier) -> Bool
     
 }
 
@@ -25,8 +28,9 @@ public final class Reference<V> : Referenceable {
     fileprivate var value: V
     fileprivate var newValue: V?
     
-    private var firstBarrierHash = AtomicInt(0)
-    private var threadBarrier: Barrier? {
+    private var blocked = AtomicBool(false)
+    private var writingBarrierHash = AtomicInt(0)
+    private var currentBarrier: Barrier? {
         return Thread.current.barrier
     }
     
@@ -41,49 +45,76 @@ public final class Reference<V> : Referenceable {
     
     // MARK: -
     
-    private func log() throws {
-        guard let threadBarrier = threadBarrier else {
+    public func get() throws -> V {
+        guard let currentBarrier = currentBarrier else {
             throw TransactionError.noBarrier
         }
         
-        if firstBarrierHash.load() != threadBarrier.hashValue && !firstBarrierHash.CAS(current: 0, future: threadBarrier.hashValue) {
-            throw TransactionError.conflict
+        if blocked.load() {
+            throw TransactionError.collision
         }
-    }
-    
-    public func get() throws -> V {
-        try log()
-        threadBarrier?.markAsRead(signature: signature)
+        
+        let hash = writingBarrierHash.load()
+        if hash != currentBarrier.hashValue && hash != 0 {
+            throw TransactionError.collision
+        }
+        
+        currentBarrier.markAsRead(signature: signature)
         
         return newValue ?? value
     }
     
     public func set(_ val: V) throws {
-        print("set \(self) on \(String(describing: threadBarrier?.hashValue))")
+        guard let currentBarrier = currentBarrier else {
+            throw TransactionError.noBarrier
+        }
         
-        try log()
-        threadBarrier?.markAsWritten(signature: signature)
+        if blocked.load() {
+            throw TransactionError.collision
+        }
+        
+        if writingBarrierHash.load() != currentBarrier.hashValue && !writingBarrierHash.CAS(current: 0, future: currentBarrier.hashValue) {
+            throw TransactionError.collision
+        }
+        
+        currentBarrier.markAsWritten(signature: signature)
         
         newValue = val
     }
     
-    func commit() {
-        guard let val = newValue else {
-            return
+    func verifyReadAccess(from barrier: Barrier) -> Bool {
+        return blocked.CAS(current: false, future: true) && writingBarrierHash.load() == 0
+    }
+    
+    func verifyWriteAccess(from barrier: Barrier) -> Bool {
+        return blocked.CAS(current: false, future: true) && writingBarrierHash.load() == barrier.hashValue
+    }
+    
+    @discardableResult func commit() -> Bool {
+        guard let val = newValue,
+          let barrier = currentBarrier, writingBarrierHash.load() == barrier.hashValue else {
+            return false
         }
-        
-        print("commit \(self) on \(String(describing: threadBarrier?.hashValue))")
         
         value = val
         newValue = nil
-        firstBarrierHash.store(0)
+        writingBarrierHash.store(0)
+        blocked.store(false)
+        
+        return true
     }
     
-    func rollback() {
-        print("rollback \(self) on \(String(describing: threadBarrier?.hashValue))")
+    @discardableResult func rollback() -> Bool {
+        guard let barrier = currentBarrier, writingBarrierHash.load() == barrier.hashValue else {
+            return false
+        }
+//        print("rollback \(self) on \(String(describing: currentBarrier?.hashValue))")
         
         newValue = nil
-        firstBarrierHash.store(0)
+        writingBarrierHash.store(0)
+        blocked.store(false)
+        
+        return true
     }
     
 }

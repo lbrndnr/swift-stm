@@ -12,7 +12,7 @@ import XCTest
 private let amount = 1
 private let initialBalance = 100_000
 private let accounts = 100
-private let transactions = 2_00_000
+private let transactions = 20_000
 
 class SwiftSTMTests: XCTestCase {
     
@@ -32,8 +32,6 @@ class SwiftSTMTests: XCTestCase {
         (0 ..< transactions).forEach { i in
             let fromID = Int(arc4random_uniform(UInt32(accounts)))
             let toID = Int(arc4random_uniform(UInt32(accounts)))
-            
-            print(fromID, toID)
             
             let from = bank.accounts[fromID]
             let to = bank.accounts[toID]

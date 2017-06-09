@@ -9,7 +9,7 @@
 import Foundation
 
 enum TransactionError: Error {
-    case conflict
+    case collision
     case aborted
     case noBarrier
 }
