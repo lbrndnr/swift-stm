@@ -13,8 +13,11 @@ struct BackoffIterator: IteratorProtocol {
     private var power: Double = 0
     
     public mutating func next() -> TimeInterval? {
-        power += 1
-        return pow(2.0, power) / 1_000_000
+        defer {
+            power += 1
+        }
+        
+        return pow(2.0, power) / 1_000_000_000
     }
     
 }

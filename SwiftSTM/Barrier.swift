@@ -11,11 +11,13 @@ import Foundation
 class Barrier {
     
     weak var thread: Thread?
+    private(set) var priority = 0
     
     fileprivate let identifier: String
     var transaction: Transaction? {
         didSet {
             backoff = BackoffIterator()
+            priority = 0
         }
     }
     
@@ -32,13 +34,17 @@ class Barrier {
     
     // MARK: -
     
-    func markAsRead(signature: Signature) {
+    func isReading(signature: Signature) -> Bool {
+        return readReferences.contains(signature) || writtenReferences.contains(signature)
+    }
+    
+    func markAsRead(using signature: Signature) {
         if !writtenReferences.contains(signature) {
             readReferences.update(with: signature)
         }
     }
     
-    func markAsWritten(signature: Signature) {
+    func markAsWritten(using signature: Signature) {
         writtenReferences.update(with: signature)
         readReferences.remove(signature)
     }
@@ -58,29 +64,38 @@ class Barrier {
                 throw TransactionError.collision
             }
             
-            writtenReferences.forEach { $0.reference?.commit() }
+            let commitCollision = writtenReferences.contains { !($0.reference?.commit(from: self) ?? true) }
+            let rollbackCollision = readReferences.contains { !($0.reference?.rollback(from: self) ?? true) }
+            
+            if commitCollision || rollbackCollision {
+                throw TransactionError.collision
+            }
+            
+            writtenReferences.removeAll()
+            readReferences.removeAll()
         }
         catch TransactionError.collision {
-            writtenReferences.forEach { $0.reference?.rollback() }
+            //print("collision on \(hashValue)")
+            writtenReferences.forEach { $0.reference?.rollback(from: self) }
             
-            if let time = backoff.next() {
-                retry(in: time)
-            }
+            //print("try rolling back \(readReferences.count) refs")
+            readReferences.forEach { $0.reference?.rollback(from: self) }
+            
+            writtenReferences.removeAll()
+            readReferences.removeAll()
+            
+            retry(in: backoff.next()!)
         }
         catch (let error) {
             print(error)
-        }
-        defer {
-            writtenReferences.removeAll()
-            readReferences.removeAll()
         }
     }
     
     func retry(in time: TimeInterval? = nil) {
         if let time = time {
-            print("go to sleep \(identifier) for \(time) at \(Date())")
+            print("go to sleep \(hashValue) for \(time) at \(Date())")
             Thread.sleep(forTimeInterval: time)
-            print("good morning \(identifier) at \(Date())")
+            print("good morning \(hashValue) at \(Date())")
         }
         
         execute()

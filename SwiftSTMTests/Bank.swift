@@ -37,6 +37,7 @@ class Bank {
         var res = false
         
         atomic {
+            print(from.ID, to.ID)
             let l = from.balance
             
             guard try l >= amount else {
