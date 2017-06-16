@@ -64,7 +64,7 @@ public final class Reference<V> : Referenceable {
         
         //print("mark \(self) as read on \(barrier.hashValue)")
         if !barrier.isReading(signature: signature) {
-            readingBarrierCount.increment()
+            incrementReadingBarrierCount()
         }
         barrier.markAsRead(using: signature)
         
@@ -91,7 +91,10 @@ public final class Reference<V> : Referenceable {
         }
         
         //print("mark \(self) as written on \(barrier.hashValue)")
-        barrier.markAsWritten(using: signature)
+        let readBefore = barrier.markAsWritten(using: signature)
+        if readBefore {
+            decrementReadingBarrierCount()
+        }
         
         newValue = val
     }
@@ -117,10 +120,7 @@ public final class Reference<V> : Referenceable {
         value = newValue ?? value
         newValue = nil
         writingBarrierHash.store(0)
-        readingBarrierCount.decrement()
-        if readingBarrierCount.load() < 0 {
-            readingBarrierCount.store(0)
-        }
+        decrementReadingBarrierCount()
         blockingBarrierHash.store(0)
         
         //print("commit \(self) on \(barrier.hashValue)")
@@ -136,15 +136,23 @@ public final class Reference<V> : Referenceable {
         
         newValue = nil
         writingBarrierHash.store(0)
-        readingBarrierCount.decrement()
-        if readingBarrierCount.load() < 0 {
-            readingBarrierCount.store(0)
-        }
+        decrementReadingBarrierCount()
         blockingBarrierHash.store(0)
         
         //print("rollback \(self) on \(barrier.hashValue)")
         
         return true
+    }
+    
+    private func incrementReadingBarrierCount() {
+        readingBarrierCount.increment()
+    }
+    
+    private func decrementReadingBarrierCount() {
+        readingBarrierCount.decrement()
+        if readingBarrierCount.load() < 0 {
+            readingBarrierCount.store(0)
+        }
     }
     
 }

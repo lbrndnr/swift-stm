@@ -38,15 +38,18 @@ class Barrier {
         return readReferences.contains(signature) || writtenReferences.contains(signature)
     }
     
+    /// Marks the signature as read if it hasn't been written to before
     func markAsRead(using signature: Signature) {
         if !writtenReferences.contains(signature) {
             readReferences.update(with: signature)
         }
     }
     
-    func markAsWritten(using signature: Signature) {
+    /// Marks the signature as written and overrides its previous state
+    /// Returns true if it has been read before
+    func markAsWritten(using signature: Signature) -> Bool {
         writtenReferences.update(with: signature)
-        readReferences.remove(signature)
+        return readReferences.remove(signature) != nil
     }
     
     func execute() {

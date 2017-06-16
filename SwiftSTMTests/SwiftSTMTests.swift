@@ -28,10 +28,10 @@ class SwiftSTMTests: XCTestCase {
         sum = accounts * initialBalance
     }
     
-    private func doTransactions() {
+    private func doTransactions(with ID: Int? = nil) {
         (0 ..< transactions).forEach { i in
             let fromID = Int(arc4random_uniform(UInt32(accounts)))
-            let toID = Int(arc4random_uniform(UInt32(accounts)))
+            let toID = ID ?? Int(arc4random_uniform(UInt32(accounts)))
             
             let from = bank.accounts[fromID]
             let to = bank.accounts[toID]
@@ -51,7 +51,24 @@ class SwiftSTMTests: XCTestCase {
         queue.maxConcurrentOperationCount = cores
         
         (0 ..< cores).forEach { _ in
-             queue.addOperation(doTransactions)
+            queue.addOperation {
+                self.doTransactions()
+            }
+        }
+        
+        queue.waitUntilAllOperationsAreFinished()
+        XCTAssertEqual(sum, bank.totalValue)
+    }
+    
+    func testProgression() {
+        let cores = ProcessInfo.processInfo.activeProcessorCount
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = cores
+        
+        (0 ..< cores).forEach { _ in
+            queue.addOperation {
+                self.doTransactions(with: 1)
+            }
         }
         
         queue.waitUntilAllOperationsAreFinished()
