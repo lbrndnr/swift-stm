@@ -35,21 +35,22 @@ class Barrier {
     // MARK: -
     
     func isReading(signature: Signature) -> Bool {
-        return readReferences.contains(signature) || writtenReferences.contains(signature)
+        return readReferences.contains(signature)
     }
     
-    /// Marks the signature as read if it hasn't been written to before
+    func isWriting(signature: Signature) -> Bool {
+        return writtenReferences.contains(signature)
+    }
+    
     func markAsRead(using signature: Signature) {
         if !writtenReferences.contains(signature) {
             readReferences.update(with: signature)
         }
     }
     
-    /// Marks the signature as written and overrides its previous state
-    /// Returns true if it has been read before
-    func markAsWritten(using signature: Signature) -> Bool {
+    func markAsWritten(using signature: Signature) {
         writtenReferences.update(with: signature)
-        return readReferences.remove(signature) != nil
+        readReferences.remove(signature)
     }
     
     func execute() {
@@ -60,20 +61,12 @@ class Barrier {
         do {
             try transaction()
             
-            let readCollision = readReferences.contains { !($0.reference?.verifyReadAccess(from: self) ?? true) }
-            let writeCollision = writtenReferences.contains { !($0.reference?.verifyWriteAccess(from: self) ?? true) }
+            try readReferences.forEach { try $0.reference?.verifyReadAccess(from: self) }
+            try writtenReferences.forEach { try $0.reference?.verifyWriteAccess(from: self) }
             
-            if readCollision || writeCollision {
-                throw TransactionError.collision
-            }
-            
-            let commitCollision = writtenReferences.contains { !($0.reference?.commit(from: self) ?? true) }
-            let rollbackCollision = readReferences.contains { !($0.reference?.rollback(from: self) ?? true) }
-            
-            if commitCollision || rollbackCollision {
-                throw TransactionError.collision
-            }
-            
+            try writtenReferences.forEach { try $0.reference?.commit(from: self) }
+            readReferences.forEach { $0.reference?.reset(from: self) }
+
             writtenReferences.removeAll()
             readReferences.removeAll()
         }
@@ -82,7 +75,7 @@ class Barrier {
             writtenReferences.forEach { $0.reference?.rollback(from: self) }
             
             //print("try rolling back \(readReferences.count) refs")
-            readReferences.forEach { $0.reference?.rollback(from: self) }
+            readReferences.forEach { $0.reference?.reset(from: self) }
             
             writtenReferences.removeAll()
             readReferences.removeAll()

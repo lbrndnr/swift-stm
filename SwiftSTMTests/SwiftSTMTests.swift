@@ -40,6 +40,11 @@ class SwiftSTMTests: XCTestCase {
         }
     }
     
+    func testMultipleWrites() {
+        let acc = bank.accounts[0]
+        bank.transfer(from: acc, to: acc, amount: 1)
+    }
+    
     func testBank() {
         doTransactions()
         XCTAssertEqual(sum, bank.totalValue)

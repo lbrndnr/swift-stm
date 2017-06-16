@@ -11,11 +11,12 @@ import Atomics
 
 protocol Referenceable: AnyObject {
     
-    @discardableResult func commit(from barrier: Barrier) -> Bool
+    func commit(from barrier: Barrier) throws
     @discardableResult func rollback(from barrier: Barrier) -> Bool
+    @discardableResult func reset(from barrier: Barrier) -> Bool
     
-    func verifyReadAccess(from barrier: Barrier) -> Bool
-    func verifyWriteAccess(from barrier: Barrier) -> Bool
+    func verifyReadAccess(from barrier: Barrier) throws
+    func verifyWriteAccess(from barrier: Barrier) throws
     
 }
 
@@ -62,10 +63,11 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.collision
         }
         
-        //print("mark \(self) as read on \(barrier.hashValue)")
-        if !barrier.isReading(signature: signature) {
-            incrementReadingBarrierCount()
+        if !barrier.isReading(signature: signature) && !barrier.isWriting(signature: signature) {
+            markAsRead()
         }
+        
+        //print("mark \(self) as read on \(barrier.hashValue)")
         barrier.markAsRead(using: signature)
         
         return newValue ?? value
@@ -85,65 +87,51 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.collision
         }
         
-        let onlyBarrierReading = (readingBarrierCount.load() == 0) || (readingBarrierCount.load() == 1 && barrier.isReading(signature: signature))
+        let onlyBarrierReading = (readingBarrierCount.load() == 0 || (readingBarrierCount.load() == 1 && barrier.isReading(signature: signature)))
         guard onlyBarrierReading else {
             throw TransactionError.collision
         }
         
         //print("mark \(self) as written on \(barrier.hashValue)")
-        let readBefore = barrier.markAsWritten(using: signature)
-        if readBefore {
-            decrementReadingBarrierCount()
-        }
+        unmarkAsRead(by: barrier)
+        barrier.markAsWritten(using: signature)
         
         newValue = val
     }
     
-    func verifyReadAccess(from barrier: Barrier) -> Bool {
+    func verifyReadAccess(from barrier: Barrier) throws {
         guard blockingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
-            return false
+            throw TransactionError.collision
         }
         
         guard writingBarrierHash.load() == 0 else {
             blockingBarrierHash.store(0)
-            return false
+            throw TransactionError.collision
         }
-        
-        return true
     }
     
-    func verifyWriteAccess(from barrier: Barrier) -> Bool {
+    func verifyWriteAccess(from barrier: Barrier) throws {
         guard blockingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
-            return false
+            throw TransactionError.collision
         }
         
         guard writingBarrierHash.load() == barrier.hashValue else {
             blockingBarrierHash.store(0)
-            return false
+            throw TransactionError.collision
         }
-        
-        return true
     }
     
-    @discardableResult func commit(from barrier: Barrier) -> Bool {
+    func commit(from barrier: Barrier) throws {
         guard blockingBarrierHash.load() == barrier.hashValue else {
-            return false
-        }
-        
-        guard writingBarrierHash.load() == barrier.hashValue else {
-            print("wtf")
-            return false
+            throw TransactionError.collision
         }
         
         value = newValue ?? value
         newValue = nil
         writingBarrierHash.store(0)
-        decrementReadingBarrierCount()
         blockingBarrierHash.store(0)
         
         //print("commit \(self) on \(barrier.hashValue)")
-        
-        return true
     }
     
     @discardableResult func rollback(from barrier: Barrier) -> Bool {
@@ -154,7 +142,6 @@ public final class Reference<V> : Referenceable {
         
         newValue = nil
         writingBarrierHash.store(0)
-        decrementReadingBarrierCount()
         blockingBarrierHash.store(0)
         
         //print("rollback \(self) on \(barrier.hashValue)")
@@ -162,14 +149,23 @@ public final class Reference<V> : Referenceable {
         return true
     }
     
-    private func incrementReadingBarrierCount() {
+    @discardableResult func reset(from barrier: Barrier) -> Bool {
+        unmarkAsRead(by: barrier)
+        return blockingBarrierHash.CAS(current: barrier.hashValue, future: 0)
+        
+        //print("reset \(self) on \(barrier.hashValue)")
+    }
+    
+    func markAsRead() {
         readingBarrierCount.increment()
     }
     
-    private func decrementReadingBarrierCount() {
-        readingBarrierCount.decrement()
-        if readingBarrierCount.load() < 0 {
-            readingBarrierCount.store(0)
+    func unmarkAsRead(by barrier: Barrier) {
+        if barrier.isReading(signature: signature) {
+            readingBarrierCount.decrement()
+            if readingBarrierCount.load() < 0 {
+                readingBarrierCount.store(0)
+            }
         }
     }
     
