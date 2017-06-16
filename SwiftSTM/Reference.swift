@@ -52,13 +52,13 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.noBarrier
         }
         
-        guard blockingBarrierHash.load() == 0 else {
-            throw TransactionError.collision
-        }
-        
         let hash = writingBarrierHash.load()
         guard hash == barrier.hashValue || hash == 0 else {
             //print("\(self) collided on \(hash) with \(barrier.hashValue)")
+            throw TransactionError.collision
+        }
+        
+        guard blockingBarrierHash.load() == 0 else {
             throw TransactionError.collision
         }
         
@@ -76,12 +76,12 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.noBarrier
         }
         
-        guard blockingBarrierHash.load() == 0 else {
+        guard writingBarrierHash.load() == barrier.hashValue || writingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
+            //print("\(self) collided on \(writingBarrierHash.load()) with \(barrier.hashValue)")
             throw TransactionError.collision
         }
         
-        guard writingBarrierHash.load() == barrier.hashValue || writingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
-            //print("\(self) collided on \(writingBarrierHash.load()) with \(barrier.hashValue)")
+        guard blockingBarrierHash.load() == 0 else {
             throw TransactionError.collision
         }
         
@@ -100,11 +100,29 @@ public final class Reference<V> : Referenceable {
     }
     
     func verifyReadAccess(from barrier: Barrier) -> Bool {
-        return writingBarrierHash.load() == 0 && blockingBarrierHash.CAS(current: 0, future: barrier.hashValue)
+        guard blockingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
+            return false
+        }
+        
+        guard writingBarrierHash.load() == 0 else {
+            blockingBarrierHash.store(0)
+            return false
+        }
+        
+        return true
     }
     
     func verifyWriteAccess(from barrier: Barrier) -> Bool {
-        return writingBarrierHash.load() == barrier.hashValue && blockingBarrierHash.CAS(current: 0, future: barrier.hashValue)
+        guard blockingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
+            return false
+        }
+        
+        guard writingBarrierHash.load() == barrier.hashValue else {
+            blockingBarrierHash.store(0)
+            return false
+        }
+        
+        return true
     }
     
     @discardableResult func commit(from barrier: Barrier) -> Bool {
