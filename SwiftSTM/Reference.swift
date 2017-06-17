@@ -31,7 +31,7 @@ public final class Reference<V> : Referenceable {
     
     private var readingBarrierCount = AtomicInt(0)
     private var writingBarrierHash = AtomicInt(0)
-    private var blockingBarrierHash = AtomicInt(0)
+    private var freezingBarrierHash = AtomicInt(0)
     
     private var currentBarrier: Barrier? {
         return Thread.current.barrier
@@ -59,7 +59,7 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.collision
         }
         
-        guard blockingBarrierHash.load() == 0 else {
+        guard freezingBarrierHash.load() == 0 else {
             throw TransactionError.collision
         }
         
@@ -83,7 +83,7 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.collision
         }
         
-        guard blockingBarrierHash.load() == 0 else {
+        guard freezingBarrierHash.load() == 0 else {
             throw TransactionError.collision
         }
         
@@ -100,49 +100,50 @@ public final class Reference<V> : Referenceable {
     }
     
     func verifyReadAccess(from barrier: Barrier) throws {
-        guard blockingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
+        guard freezingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
             throw TransactionError.collision
         }
         
         guard writingBarrierHash.load() == 0 else {
-            blockingBarrierHash.store(0)
+            freezingBarrierHash.store(0)
             throw TransactionError.collision
         }
     }
     
     func verifyWriteAccess(from barrier: Barrier) throws {
-        guard blockingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
+        guard freezingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
             throw TransactionError.collision
         }
         
         guard writingBarrierHash.load() == barrier.hashValue else {
-            blockingBarrierHash.store(0)
+            freezingBarrierHash.store(0)
             throw TransactionError.collision
         }
     }
     
     func commit(from barrier: Barrier) throws {
-        guard blockingBarrierHash.load() == barrier.hashValue else {
+        guard freezingBarrierHash.load() == barrier.hashValue else {
+            print("ups what")
             throw TransactionError.collision
         }
         
         value = newValue ?? value
         newValue = nil
         writingBarrierHash.store(0)
-        blockingBarrierHash.store(0)
+        freezingBarrierHash.store(0)
         
         //print("commit \(self) on \(barrier.hashValue)")
     }
     
     @discardableResult func rollback(from barrier: Barrier) -> Bool {
-        let hash = blockingBarrierHash.load()
+        let hash = freezingBarrierHash.load()
         guard hash == barrier.hashValue || hash == 0 else {
             return false
         }
         
         newValue = nil
         writingBarrierHash.store(0)
-        blockingBarrierHash.store(0)
+        freezingBarrierHash.store(0)
         
         //print("rollback \(self) on \(barrier.hashValue)")
         
@@ -151,7 +152,7 @@ public final class Reference<V> : Referenceable {
     
     @discardableResult func reset(from barrier: Barrier) -> Bool {
         unmarkAsRead(by: barrier)
-        return blockingBarrierHash.CAS(current: barrier.hashValue, future: 0)
+        return freezingBarrierHash.CAS(current: barrier.hashValue, future: 0)
         
         //print("reset \(self) on \(barrier.hashValue)")
     }
