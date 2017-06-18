@@ -10,6 +10,7 @@ import Foundation
 
 enum TransactionError: Error {
     case collision
+    case unfrozen
     case aborted
     case noBarrier
 }

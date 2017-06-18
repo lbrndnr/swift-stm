@@ -70,6 +70,9 @@ class Barrier {
             writtenReferences.removeAll()
             readReferences.removeAll()
         }
+        catch TransactionError.unfrozen {
+            print("can't really resolve this, damn")
+        }
         catch TransactionError.collision {
             //print("collision on \(hashValue)")
             writtenReferences.forEach { $0.reference?.rollback(from: self) }

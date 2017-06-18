@@ -73,7 +73,7 @@ public final class Reference<V> : Referenceable {
         return newValue ?? value
     }
     
-    public func set(_ val: V) throws {        
+    public func set(_ val: V) throws {
         guard let barrier = currentBarrier else {
             throw TransactionError.noBarrier
         }
@@ -124,7 +124,7 @@ public final class Reference<V> : Referenceable {
     func commit(from barrier: Barrier) throws {
         guard freezingBarrierHash.load() == barrier.hashValue else {
             print("ups what")
-            throw TransactionError.collision
+            throw TransactionError.unfrozen
         }
         
         value = newValue ?? value
