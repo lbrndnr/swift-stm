@@ -61,12 +61,11 @@ class Barrier {
         do {
             try transaction()
             
-            try readReferences.forEach { try $0.reference?.verifyReadAccess(from: self) }
-            try writtenReferences.forEach { try $0.reference?.verifyWriteAccess(from: self) }
+            readReferences.forEach { $0.reference?.freeze() }
             
-            try writtenReferences.forEach { try $0.reference?.commit(from: self) }
-            readReferences.forEach { $0.reference?.reset(from: self) }
-
+            writtenReferences.forEach { $0.reference?.commit() }
+            readReferences.forEach { $0.reference?.reset(unfreeze: true) }
+            
             writtenReferences.removeAll()
             readReferences.removeAll()
         }
@@ -74,11 +73,8 @@ class Barrier {
             print("can't really resolve this, damn")
         }
         catch TransactionError.collision {
-            //print("collision on \(hashValue)")
-            writtenReferences.forEach { $0.reference?.rollback(from: self) }
-            
-            //print("try rolling back \(readReferences.count) refs")
-            readReferences.forEach { $0.reference?.reset(from: self) }
+            writtenReferences.forEach { $0.reference?.rollback() }
+            readReferences.forEach { $0.reference?.reset(unfreeze: false) }
             
             writtenReferences.removeAll()
             readReferences.removeAll()

@@ -9,10 +9,9 @@
 import XCTest
 @testable import SwiftSTM
 
-private let amount = 1
-private let initialBalance = 100_000
+private let initialBalance = 1_000_000
 private let accounts = 20
-private let transactions = 10_000
+private let transactions = 30_000
 
 class SwiftSTMTests: XCTestCase {
     
@@ -36,7 +35,7 @@ class SwiftSTMTests: XCTestCase {
             let from = bank.accounts[fromID]
             let to = bank.accounts[toID]
             
-            bank.transfer(from: from, to: to, amount: amount)
+            bank.transfer(from: from, to: to, amount: i)
         }
     }
     
