@@ -11,7 +11,7 @@ import XCTest
 
 private let initialBalance = 1_000_000
 private let accounts = 20
-private let transactions = 30_000
+private let transactions = 100_000
 
 class SwiftSTMTests: XCTestCase {
     
@@ -27,10 +27,10 @@ class SwiftSTMTests: XCTestCase {
         sum = accounts * initialBalance
     }
     
-    private func doTransactions(with ID: Int? = nil) {
+    private func doTransactions(from fID: Int? = nil, to tID: Int? = nil) {
         (0 ..< transactions).forEach { i in
-            let fromID = Int(arc4random_uniform(UInt32(accounts)))
-            let toID = ID ?? Int(arc4random_uniform(UInt32(accounts)))
+            let fromID = fID ?? Int(arc4random_uniform(UInt32(accounts)))
+            let toID = tID ?? Int(arc4random_uniform(UInt32(accounts)))
             
             let from = bank.accounts[fromID]
             let to = bank.accounts[toID]
@@ -39,43 +39,37 @@ class SwiftSTMTests: XCTestCase {
         }
     }
     
-    func testMultipleWrites() {
-        let acc = bank.accounts[0]
-        bank.transfer(from: acc, to: acc, amount: 1)
-    }
-    
     func testBank() {
         doTransactions()
         XCTAssertEqual(sum, bank.totalValue)
     }
     
-    func testBankParallel() {
+    private func doTransactionsParallel(from fID: Int? = nil, to tID: Int? = nil) {
         let cores = ProcessInfo.processInfo.activeProcessorCount
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = cores
         
         (0 ..< cores).forEach { _ in
             queue.addOperation {
-                self.doTransactions()
+                self.doTransactions(from: fID, to: tID)
             }
         }
         
         queue.waitUntilAllOperationsAreFinished()
+    }
+    
+    func testBankParallel() {
+        doTransactionsParallel()
         XCTAssertEqual(sum, bank.totalValue)
     }
     
-    func testProgression() {
-        let cores = ProcessInfo.processInfo.activeProcessorCount
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = cores
-        
-        (0 ..< cores).forEach { _ in
-            queue.addOperation {
-                self.doTransactions(with: 1)
-            }
-        }
-        
-        queue.waitUntilAllOperationsAreFinished()
+    func testDeadlock() {
+        doTransactionsParallel(to: 0)
+        XCTAssertEqual(sum, bank.totalValue)
+    }
+    
+    func testMultipleWrites() {
+        doTransactionsParallel(from: 0, to: 0)
         XCTAssertEqual(sum, bank.totalValue)
     }
     

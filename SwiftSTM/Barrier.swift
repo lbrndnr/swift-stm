@@ -43,14 +43,11 @@ class Barrier {
     }
     
     func markAsRead(using signature: Signature) {
-        if !writtenReferences.contains(signature) {
-            readReferences.update(with: signature)
-        }
+        readReferences.update(with: signature)
     }
     
     func markAsWritten(using signature: Signature) {
         writtenReferences.update(with: signature)
-        readReferences.remove(signature)
     }
     
     func execute() {
@@ -61,20 +58,19 @@ class Barrier {
         do {
             try transaction()
             
-            readReferences.forEach { $0.reference?.freeze() }
-            
             writtenReferences.forEach { $0.reference?.commit() }
-            readReferences.forEach { $0.reference?.reset(unfreeze: true) }
+            readReferences.forEach { $0.reference?.reset() }
             
             writtenReferences.removeAll()
             readReferences.removeAll()
         }
         catch TransactionError.unfrozen {
             print("can't really resolve this, damn")
+            abort()
         }
         catch TransactionError.collision {
             writtenReferences.forEach { $0.reference?.rollback() }
-            readReferences.forEach { $0.reference?.reset(unfreeze: false) }
+            readReferences.forEach { $0.reference?.reset() }
             
             writtenReferences.removeAll()
             readReferences.removeAll()
