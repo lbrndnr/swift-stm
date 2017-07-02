@@ -82,9 +82,9 @@ class Barrier {
     
     func retry(in time: TimeInterval? = nil) {
         if let time = time {
-            print("go to sleep \(identifier) for \(time) at \(Date())")
+//            print("go to sleep \(identifier) for \(time) at \(Date())")
             Thread.sleep(forTimeInterval: time)
-            print("good morning \(identifier) at \(Date())")
+//            print("good morning \(identifier) at \(Date())")
         }
         
         execute()

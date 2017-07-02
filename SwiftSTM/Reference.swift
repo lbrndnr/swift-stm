@@ -21,6 +21,9 @@ protocol Referenceable: AnyObject {
 
 public typealias Ref<V> = Reference<V>
 
+private let writeMask: UInt64 = 0xFFFFFFFF00000000
+private let readMask: UInt64 = 0xFFFFFFFF
+
 public final class Reference<V> : Referenceable {
     
     var signature = Signature()
@@ -46,11 +49,11 @@ public final class Reference<V> : Referenceable {
     // MARK: -
     
     private func writingBarrier(from: UInt64) -> UInt64 {
-        return (from & 0xFFFFFFFF00000000) >> 32
+        return (from & writeMask) >> 32
     }
     
     private func numberOfReads(from: UInt64) -> UInt64 {
-        return from & 0xFFFFFFFF
+        return from & readMask
     }
     
     public func get() throws -> V {
@@ -93,33 +96,16 @@ public final class Reference<V> : Referenceable {
 
     func commit() {
         value = newValue ?? value
-        newValue = nil
-        
-        var a: UInt64
-        repeat {
-            a = access.load()
-        } while !access.CAS(current: a, future: numberOfReads(from: a))
+        rollback()
     }
     
     func rollback() {
         newValue = nil
-
-        var a: UInt64
-        repeat {
-            a = access.load()
-        } while !access.CAS(current: a, future: numberOfReads(from: a))
+        access.bitwiseAnd(readMask)
     }
     
     func reset() {
-        var a: UInt64
-        var sID: UInt64
-        var cr: UInt64
-        
-        repeat {
-            a = access.load()
-            sID = writingBarrier(from: a) << 32
-            cr = numberOfReads(from: a)
-        } while !access.CAS(current: sID + cr, future: sID + (cr - 1))
+        access.decrement()
     }
     
 }
