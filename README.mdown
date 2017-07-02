@@ -22,7 +22,7 @@ func transfer(from: Account, to: Account, amount: Int) -> Bool {
     var res = false
     
     queue.async {            
-        let i = try from.balance.get()
+        let i = from.balance
         
         guard i >= amount else {
             return
