@@ -36,8 +36,14 @@ class Bank {
     @discardableResult func transfer(from: Account, to: Account, amount: Int) -> Bool {
         var res = false
         
-        atomic {
-            try from.balance.set(from.balance.get() - amount)
+        atomic {            
+            let i = try from.balance.get()
+            
+            guard i >= amount else {
+                return
+            }
+            
+            try from.balance.set(i - amount)
             try to.balance.set(to.balance.get() + amount)
             
             res = true

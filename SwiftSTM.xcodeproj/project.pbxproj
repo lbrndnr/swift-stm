@@ -22,6 +22,7 @@
 		49A0E1291EDCAAF500B5D7B2 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0E1281EDCAAF500B5D7B2 /* Account.swift */; };
 		49A0E12B1EDCAB4B00B5D7B2 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0E12A1EDCAB4B00B5D7B2 /* Bank.swift */; };
 		49A0E12F1EDCB20600B5D7B2 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0E12E1EDCB20600B5D7B2 /* Reference.swift */; };
+		49E275ED1F0904AD009D5C62 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E275EC1F0904AD009D5C62 /* Manager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		49A0E1281EDCAAF500B5D7B2 /* Account.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		49A0E12A1EDCAB4B00B5D7B2 /* Bank.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
 		49A0E12E1EDCB20600B5D7B2 /* Reference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
+		49E275EC1F0904AD009D5C62 /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 			children = (
 				496E34C01EE4199900202340 /* Error.swift */,
 				490F748D1EDEF4B7001BA423 /* Transaction.swift */,
+				49E275EC1F0904AD009D5C62 /* Manager.swift */,
 				496E34C21EE4241100202340 /* Barrier.swift */,
 				49A0E12E1EDCB20600B5D7B2 /* Reference.swift */,
 				4953BE281EE46464008AB509 /* Signature.swift */,
@@ -288,6 +291,7 @@
 				496E34C81EE4247600202340 /* Thread.swift in Sources */,
 				496E34CC1EE4281300202340 /* BackoffIterator.swift in Sources */,
 				496E34C31EE4241100202340 /* Barrier.swift in Sources */,
+				49E275ED1F0904AD009D5C62 /* Manager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

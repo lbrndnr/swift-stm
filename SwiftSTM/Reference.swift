@@ -28,7 +28,7 @@ public final class Reference<V> : Referenceable {
     fileprivate var value: V
     fileprivate var newValue: V?
     
-    private var access = AtomicInt64(0)
+    private var access = AtomicUInt64(0)
     
     private var currentBarrier: Barrier? {
         return Thread.current.barrier
@@ -45,12 +45,12 @@ public final class Reference<V> : Referenceable {
     
     // MARK: -
     
-    var writingBarrier: Int64 {
-        return access.load() & 0xFFFFFF00
+    private func writingBarrier(from: UInt64) -> UInt64 {
+        return (from & 0xFFFFFFFF00000000) >> 32
     }
     
-    var numberOfReads: Int64 {
-        return access.load() & 0xFF
+    private func numberOfReads(from: UInt64) -> UInt64 {
+        return from & 0xFFFFFFFF
     }
     
     public func get() throws -> V {
@@ -58,10 +58,11 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.noBarrier
         }
         
-        let cr = numberOfReads
-        let nr: Int64 = barrier.isReading(signature: signature) ? cr : cr + 1
-        let previouslyRead = access.CAS(current: Int64(barrier.hashValue << 16) + cr, future: Int64(barrier.hashValue << 16) + nr)
-        let noPreviousRead = access.CAS(current: cr, future: Int64(barrier.hashValue << 16) + nr)
+        let sID = UInt64(barrier.identifier) << 32
+        let cr = numberOfReads(from: access.load())
+        let nr: UInt64 = barrier.isReading(signature: signature) ? cr : cr + 1
+        let previouslyRead = access.CAS(current: sID + cr, future: sID + nr)
+        let noPreviousRead = access.CAS(current: cr, future: nr)
         
         guard noPreviousRead || previouslyRead else {
             throw TransactionError.collision
@@ -76,11 +77,13 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.noBarrier
         }
         
-        let cr = numberOfReads
-        let previouslyWritten = access.CAS(current: Int64(barrier.hashValue << 16) + cr, future: Int64(barrier.hashValue << 16) + cr)
-        let noPreviousWrite = access.CAS(current: cr, future: Int64(barrier.hashValue << 16) + cr)
+        let sID = UInt64(barrier.identifier) << 32
+        let cr = numberOfReads(from: access.load())
+        let previouslyWritten = access.CAS(current: sID + cr, future: sID + cr)
+        let noPreviousRead = barrier.isReading(signature: signature) && access.CAS(current: 1, future: sID + 1)
+        let noPreviousAccess = access.CAS(current: 0, future: sID)
         
-        guard noPreviousWrite || previouslyWritten else {
+        guard noPreviousRead || noPreviousAccess || previouslyWritten else {
             throw TransactionError.collision
         }
         
@@ -92,26 +95,31 @@ public final class Reference<V> : Referenceable {
         value = newValue ?? value
         newValue = nil
         
-        while !access.CAS(current: access.load(), future: numberOfReads) {
-        
-        }
+        var a: UInt64
+        repeat {
+            a = access.load()
+        } while !access.CAS(current: a, future: numberOfReads(from: a))
     }
     
     func rollback() {
         newValue = nil
-        while !access.CAS(current: access.load(), future: numberOfReads) {
-        
-        }
+
+        var a: UInt64
+        repeat {
+            a = access.load()
+        } while !access.CAS(current: a, future: numberOfReads(from: a))
     }
     
     func reset() {
-        var a = access.load()
-        var cr = numberOfReads
-
-        while !access.CAS(current: (a & 0xFFFFFF00) + cr , future: (a & 0xFFFFFF00) + cr - 1) {
+        var a: UInt64
+        var sID: UInt64
+        var cr: UInt64
+        
+        repeat {
             a = access.load()
-            cr = numberOfReads
-        }
+            sID = writingBarrier(from: a) << 32
+            cr = numberOfReads(from: a)
+        } while !access.CAS(current: sID + cr, future: sID + (cr - 1))
     }
     
 }
@@ -121,4 +129,30 @@ extension Reference: CustomDebugStringConvertible {
     public var debugDescription: String {
         return "Reference(value: \(value), info:\(debugInfo ?? ""))"
     }
+}
+
+extension String {
+    /// optionally change to use "Character" type instead
+    public func pad(with padding: String, toLength length: Int) -> String {
+        let paddingWidth = length - self.characters.count
+        guard paddingWidth > 0 else { return self }
+        
+        return String(repeating: padding, count: paddingWidth) + self
+    }
+}
+
+extension UInt64 {
+    
+    var bits: String {
+        let str = String(self, radix: 2).pad(with: "0", toLength: 64)
+        let head = str.substring(to: str.index(str.startIndex, offsetBy: 32))
+        let tail = str.substring(from: str.index(str.startIndex, offsetBy: 32))
+        
+        guard head.lengthOfBytes(using: .utf8) == tail.lengthOfBytes(using: .utf8) else {
+            abort()
+        }
+        
+        return head + "|" + tail
+    }
+    
 }

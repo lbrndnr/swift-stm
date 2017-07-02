@@ -11,13 +11,11 @@ import Foundation
 class Barrier {
     
     weak var thread: Thread?
-    private(set) var priority = 0
     
-    fileprivate let identifier: String
+    let identifier: Identifier
     var transaction: Transaction? {
         didSet {
             backoff = BackoffIterator()
-            priority = 0
         }
     }
     
@@ -29,7 +27,11 @@ class Barrier {
     // MARK: - Initialization
     
     init() {
-        self.identifier = UUID().uuidString
+        self.identifier = Manager.shared.generateNewIdentifier()
+    }
+    
+    deinit {
+        Manager.shared.recycle(identifier)
     }
     
     // MARK: -
@@ -64,10 +66,6 @@ class Barrier {
             writtenReferences.removeAll()
             readReferences.removeAll()
         }
-        catch TransactionError.unfrozen {
-            print("can't really resolve this, damn")
-            abort()
-        }
         catch TransactionError.collision {
             writtenReferences.forEach { $0.reference?.rollback() }
             readReferences.forEach { $0.reference?.reset() }
@@ -84,24 +82,12 @@ class Barrier {
     
     func retry(in time: TimeInterval? = nil) {
         if let time = time {
-            print("go to sleep \(hashValue) for \(time) at \(Date())")
+            print("go to sleep \(identifier) for \(time) at \(Date())")
             Thread.sleep(forTimeInterval: time)
-            print("good morning \(hashValue) at \(Date())")
+            print("good morning \(identifier) at \(Date())")
         }
         
         execute()
     }
     
-}
-
-extension Barrier: Equatable {
-    
-    var hashValue: Int {
-        return identifier.hashValue & 0xFFFFFF
-    }
-    
-}
-
-func ==(lhs: Barrier, rhs: Barrier) -> Bool {
-    return lhs.identifier == rhs.identifier
 }
