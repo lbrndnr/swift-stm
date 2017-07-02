@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SwiftSTM
+import STM
 
 class Bank {
     

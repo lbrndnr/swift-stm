@@ -1,19 +1,19 @@
 //
-//  SwiftSTMTests.swift
-//  SwiftSTMTests
+//  STMTests.swift
+//  STMTests
 //
 //  Created by Laurin Brandner on 29.05.17.
 //  Copyright © 2017 Laurin Brandner. All rights reserved.
 //
 
 import XCTest
-@testable import SwiftSTM
+@testable import STM
 
 private let initialBalance = 1_000_000
 private let accounts = 20
 private let transactions = 200_000
 
-class SwiftSTMTests: XCTestCase {
+class STMTests: XCTestCase {
     
     var bank = Bank(accounts: [])
     var sum = 0

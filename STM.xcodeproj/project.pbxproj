@@ -16,8 +16,8 @@
 		496E34C31EE4241100202340 /* Barrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E34C21EE4241100202340 /* Barrier.swift */; };
 		496E34C81EE4247600202340 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E34C71EE4247600202340 /* Thread.swift */; };
 		496E34CC1EE4281300202340 /* BackoffIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E34CB1EE4281300202340 /* BackoffIterator.swift */; };
-		49A0E1181EDCAA5B00B5D7B2 /* SwiftSTM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49A0E10E1EDCAA5B00B5D7B2 /* SwiftSTM.framework */; };
-		49A0E11D1EDCAA5B00B5D7B2 /* SwiftSTMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0E11C1EDCAA5B00B5D7B2 /* SwiftSTMTests.swift */; };
+		49A0E1181EDCAA5B00B5D7B2 /* STM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49A0E10E1EDCAA5B00B5D7B2 /* STM.framework */; };
+		49A0E11D1EDCAA5B00B5D7B2 /* STMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0E11C1EDCAA5B00B5D7B2 /* STMTests.swift */; };
 		49A0E11F1EDCAA5B00B5D7B2 /* SwiftSTM.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A0E1111EDCAA5B00B5D7B2 /* SwiftSTM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		49A0E1291EDCAAF500B5D7B2 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0E1281EDCAAF500B5D7B2 /* Account.swift */; };
 		49A0E12B1EDCAB4B00B5D7B2 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0E12A1EDCAB4B00B5D7B2 /* Bank.swift */; };
@@ -45,11 +45,11 @@
 		496E34C21EE4241100202340 /* Barrier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Barrier.swift; sourceTree = "<group>"; };
 		496E34C71EE4247600202340 /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
 		496E34CB1EE4281300202340 /* BackoffIterator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackoffIterator.swift; sourceTree = "<group>"; };
-		49A0E10E1EDCAA5B00B5D7B2 /* SwiftSTM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftSTM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		49A0E10E1EDCAA5B00B5D7B2 /* STM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = STM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49A0E1111EDCAA5B00B5D7B2 /* SwiftSTM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftSTM.h; sourceTree = "<group>"; };
 		49A0E1121EDCAA5B00B5D7B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		49A0E1171EDCAA5B00B5D7B2 /* SwiftSTMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftSTMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		49A0E11C1EDCAA5B00B5D7B2 /* SwiftSTMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSTMTests.swift; sourceTree = "<group>"; };
+		49A0E1171EDCAA5B00B5D7B2 /* STMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = STMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		49A0E11C1EDCAA5B00B5D7B2 /* STMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STMTests.swift; sourceTree = "<group>"; };
 		49A0E11E1EDCAA5B00B5D7B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49A0E1281EDCAAF500B5D7B2 /* Account.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		49A0E12A1EDCAB4B00B5D7B2 /* Bank.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
@@ -70,7 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49A0E1181EDCAA5B00B5D7B2 /* SwiftSTM.framework in Frameworks */,
+				49A0E1181EDCAA5B00B5D7B2 /* STM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,8 +105,8 @@
 		49A0E1041EDCAA5B00B5D7B2 = {
 			isa = PBXGroup;
 			children = (
-				49A0E1101EDCAA5B00B5D7B2 /* SwiftSTM */,
-				49A0E11B1EDCAA5B00B5D7B2 /* SwiftSTMTests */,
+				49A0E1101EDCAA5B00B5D7B2 /* STM */,
+				49A0E11B1EDCAA5B00B5D7B2 /* STMTests */,
 				49A0E10F1EDCAA5B00B5D7B2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -114,13 +114,13 @@
 		49A0E10F1EDCAA5B00B5D7B2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				49A0E10E1EDCAA5B00B5D7B2 /* SwiftSTM.framework */,
-				49A0E1171EDCAA5B00B5D7B2 /* SwiftSTMTests.xctest */,
+				49A0E10E1EDCAA5B00B5D7B2 /* STM.framework */,
+				49A0E1171EDCAA5B00B5D7B2 /* STMTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		49A0E1101EDCAA5B00B5D7B2 /* SwiftSTM */ = {
+		49A0E1101EDCAA5B00B5D7B2 /* STM */ = {
 			isa = PBXGroup;
 			children = (
 				496E34C01EE4199900202340 /* Error.swift */,
@@ -136,18 +136,18 @@
 				496E34B71EE4025C00202340 /* Frameworks */,
 				496E34B61EE4025200202340 /* Supporting Files */,
 			);
-			path = SwiftSTM;
+			path = STM;
 			sourceTree = "<group>";
 		};
-		49A0E11B1EDCAA5B00B5D7B2 /* SwiftSTMTests */ = {
+		49A0E11B1EDCAA5B00B5D7B2 /* STMTests */ = {
 			isa = PBXGroup;
 			children = (
 				49A0E1281EDCAAF500B5D7B2 /* Account.swift */,
 				49A0E12A1EDCAB4B00B5D7B2 /* Bank.swift */,
-				49A0E11C1EDCAA5B00B5D7B2 /* SwiftSTMTests.swift */,
+				49A0E11C1EDCAA5B00B5D7B2 /* STMTests.swift */,
 				49A0E11E1EDCAA5B00B5D7B2 /* Info.plist */,
 			);
-			path = SwiftSTMTests;
+			path = STMTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,9 +164,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		49A0E10D1EDCAA5B00B5D7B2 /* SwiftSTM */ = {
+		49A0E10D1EDCAA5B00B5D7B2 /* STM */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 49A0E1221EDCAA5B00B5D7B2 /* Build configuration list for PBXNativeTarget "SwiftSTM" */;
+			buildConfigurationList = 49A0E1221EDCAA5B00B5D7B2 /* Build configuration list for PBXNativeTarget "STM" */;
 			buildPhases = (
 				49A0E1091EDCAA5B00B5D7B2 /* Sources */,
 				49A0E10A1EDCAA5B00B5D7B2 /* Frameworks */,
@@ -178,14 +178,14 @@
 			);
 			dependencies = (
 			);
-			name = SwiftSTM;
+			name = STM;
 			productName = SwiftSTM;
-			productReference = 49A0E10E1EDCAA5B00B5D7B2 /* SwiftSTM.framework */;
+			productReference = 49A0E10E1EDCAA5B00B5D7B2 /* STM.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		49A0E1161EDCAA5B00B5D7B2 /* SwiftSTMTests */ = {
+		49A0E1161EDCAA5B00B5D7B2 /* STMTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 49A0E1251EDCAA5B00B5D7B2 /* Build configuration list for PBXNativeTarget "SwiftSTMTests" */;
+			buildConfigurationList = 49A0E1251EDCAA5B00B5D7B2 /* Build configuration list for PBXNativeTarget "STMTests" */;
 			buildPhases = (
 				49A0E1131EDCAA5B00B5D7B2 /* Sources */,
 				49A0E1141EDCAA5B00B5D7B2 /* Frameworks */,
@@ -196,9 +196,9 @@
 			dependencies = (
 				49A0E11A1EDCAA5B00B5D7B2 /* PBXTargetDependency */,
 			);
-			name = SwiftSTMTests;
+			name = STMTests;
 			productName = SwiftSTMTests;
-			productReference = 49A0E1171EDCAA5B00B5D7B2 /* SwiftSTMTests.xctest */;
+			productReference = 49A0E1171EDCAA5B00B5D7B2 /* STMTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -224,7 +224,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 49A0E1081EDCAA5B00B5D7B2 /* Build configuration list for PBXProject "SwiftSTM" */;
+			buildConfigurationList = 49A0E1081EDCAA5B00B5D7B2 /* Build configuration list for PBXProject "STM" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -236,8 +236,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				49A0E10D1EDCAA5B00B5D7B2 /* SwiftSTM */,
-				49A0E1161EDCAA5B00B5D7B2 /* SwiftSTMTests */,
+				49A0E10D1EDCAA5B00B5D7B2 /* STM */,
+				49A0E1161EDCAA5B00B5D7B2 /* STMTests */,
 			);
 		};
 /* End PBXProject section */
@@ -300,7 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49A0E12B1EDCAB4B00B5D7B2 /* Bank.swift in Sources */,
-				49A0E11D1EDCAA5B00B5D7B2 /* SwiftSTMTests.swift in Sources */,
+				49A0E11D1EDCAA5B00B5D7B2 /* STMTests.swift in Sources */,
 				49A0E1291EDCAAF500B5D7B2 /* Account.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -310,7 +310,7 @@
 /* Begin PBXTargetDependency section */
 		49A0E11A1EDCAA5B00B5D7B2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 49A0E10D1EDCAA5B00B5D7B2 /* SwiftSTM */;
+			target = 49A0E10D1EDCAA5B00B5D7B2 /* STM */;
 			targetProxy = 49A0E1191EDCAA5B00B5D7B2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -431,10 +431,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = SwiftSTM/Info.plist;
+				INFOPLIST_FILE = STM/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = ch.laurinbrandner.SwiftSTM;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.laurinbrandner.STM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -456,10 +456,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = SwiftSTM/Info.plist;
+				INFOPLIST_FILE = STM/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = ch.laurinbrandner.SwiftSTM;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.laurinbrandner.STM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -471,9 +471,9 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = 5953RHWYWT;
-				INFOPLIST_FILE = SwiftSTMTests/Info.plist;
+				INFOPLIST_FILE = STMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = ch.laurinbrandner.SwiftSTMTests;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.laurinbrandner.STMTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -484,9 +484,9 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = 5953RHWYWT;
-				INFOPLIST_FILE = SwiftSTMTests/Info.plist;
+				INFOPLIST_FILE = STMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = ch.laurinbrandner.SwiftSTMTests;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.laurinbrandner.STMTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -495,7 +495,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		49A0E1081EDCAA5B00B5D7B2 /* Build configuration list for PBXProject "SwiftSTM" */ = {
+		49A0E1081EDCAA5B00B5D7B2 /* Build configuration list for PBXProject "STM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				49A0E1201EDCAA5B00B5D7B2 /* Debug */,
@@ -504,7 +504,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		49A0E1221EDCAA5B00B5D7B2 /* Build configuration list for PBXNativeTarget "SwiftSTM" */ = {
+		49A0E1221EDCAA5B00B5D7B2 /* Build configuration list for PBXNativeTarget "STM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				49A0E1231EDCAA5B00B5D7B2 /* Debug */,
@@ -513,7 +513,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		49A0E1251EDCAA5B00B5D7B2 /* Build configuration list for PBXNativeTarget "SwiftSTMTests" */ = {
+		49A0E1251EDCAA5B00B5D7B2 /* Build configuration list for PBXNativeTarget "STMTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				49A0E1261EDCAA5B00B5D7B2 /* Debug */,
