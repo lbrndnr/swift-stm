@@ -28,9 +28,7 @@ public final class Reference<V> : Referenceable {
     fileprivate var value: V
     fileprivate var newValue: V?
     
-    private var readingBarrierCount = AtomicInt(0)
-    private var writingBarrierHash = AtomicInt(0)
-    private var blockingBarrierHash = AtomicInt(0)
+    private var access = AtomicInt64(0)
     
     private var currentBarrier: Barrier? {
         return Thread.current.barrier
@@ -47,19 +45,29 @@ public final class Reference<V> : Referenceable {
     
     // MARK: -
     
+    var writingBarrier: Int64 {
+        return access.load() & 0xFFFFFF00
+    }
+    
+    var numberOfReads: Int64 {
+        return access.load() & 0xFF
+    }
+    
     public func get() throws -> V {
         guard let barrier = currentBarrier else {
             throw TransactionError.noBarrier
         }
         
-        let writingBarrier = writingBarrierHash.load()
-        guard writingBarrier == 0 || writingBarrier == barrier.hashValue else {
+        let cr = numberOfReads
+        let nr: Int64 = barrier.isReading(signature: signature) ? cr : cr + 1
+        let previouslyRead = access.CAS(current: Int64(barrier.hashValue << 16) + cr, future: Int64(barrier.hashValue << 16) + nr)
+        let noPreviousRead = access.CAS(current: cr, future: Int64(barrier.hashValue << 16) + nr)
+        
+        guard noPreviousRead || previouslyRead else {
             throw TransactionError.collision
         }
         
-        markAsRead(by: barrier)
         barrier.markAsRead(using: signature)
-        
         return newValue ?? value
     }
     
@@ -68,51 +76,41 @@ public final class Reference<V> : Referenceable {
             throw TransactionError.noBarrier
         }
         
-        let count = readingBarrierCount.load()
-        let noBarrierReading = count == 0
-        let onlyBarrierReading = count == 1 && barrier.isReading(signature: signature)
+        let cr = numberOfReads
+        let previouslyWritten = access.CAS(current: Int64(barrier.hashValue << 16) + cr, future: Int64(barrier.hashValue << 16) + cr)
+        let noPreviousWrite = access.CAS(current: cr, future: Int64(barrier.hashValue << 16) + cr)
         
-        guard noBarrierReading || onlyBarrierReading else {
-            throw TransactionError.collision
-        }
-        
-        guard writingBarrierHash.load() == barrier.hashValue || writingBarrierHash.CAS(current: 0, future: barrier.hashValue) else {
+        guard noPreviousWrite || previouslyWritten else {
             throw TransactionError.collision
         }
         
         barrier.markAsWritten(using: signature)
-        
         newValue = val
     }
 
     func commit() {
         value = newValue ?? value
         newValue = nil
-        writingBarrierHash.store(0)
+        
+        while !access.CAS(current: access.load(), future: numberOfReads) {
+        
+        }
     }
     
     func rollback() {
         newValue = nil
-        writingBarrierHash.store(0)
+        while !access.CAS(current: access.load(), future: numberOfReads) {
+        
+        }
     }
     
     func reset() {
-        guard let barrier = currentBarrier else {
-            return
-        }
-        
-        unmarkAsRead(by: barrier)
-    }
-    
-    func markAsRead(by barrier: Barrier) {
-        if !barrier.isReading(signature: signature) {
-            readingBarrierCount.increment()
-        }
-    }
-    
-    func unmarkAsRead(by barrier: Barrier) {
-        if barrier.isReading(signature: signature) {
-            readingBarrierCount.decrement()
+        var a = access.load()
+        var cr = numberOfReads
+
+        while !access.CAS(current: (a & 0xFFFFFF00) + cr , future: (a & 0xFFFFFF00) + cr - 1) {
+            a = access.load()
+            cr = numberOfReads
         }
     }
     

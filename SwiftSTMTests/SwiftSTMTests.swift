@@ -11,7 +11,7 @@ import XCTest
 
 private let initialBalance = 1_000_000
 private let accounts = 20
-private let transactions = 100_000
+private let transactions = 200_000
 
 class SwiftSTMTests: XCTestCase {
     

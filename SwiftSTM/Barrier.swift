@@ -97,7 +97,7 @@ class Barrier {
 extension Barrier: Equatable {
     
     var hashValue: Int {
-        return identifier.hashValue
+        return identifier.hashValue & 0xFFFFFF
     }
     
 }
