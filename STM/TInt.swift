@@ -1,6 +1,6 @@
 //
 //  TInt.swift
-//  SwiftSTM
+//  STM
 //
 //  Created by Laurin Brandner on 04.06.17.
 //  Copyright © 2017 Laurin Brandner. All rights reserved.

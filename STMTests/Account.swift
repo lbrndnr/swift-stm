@@ -1,6 +1,6 @@
 //
 //  Account.swift
-//  SwiftSTM
+//  STM
 //
 //  Created by Laurin Brandner on 29.05.17.
 //  Copyright © 2017 Laurin Brandner. All rights reserved.
