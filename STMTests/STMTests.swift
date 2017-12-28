@@ -10,8 +10,8 @@ import XCTest
 @testable import STM
 
 private let initialBalance = 1_000_000
-private let accounts = 20
-private let transactions = 200_000
+private let accounts = 100000
+private let transactions = 100_000
 
 class STMTests: XCTestCase {
     
@@ -44,12 +44,11 @@ class STMTests: XCTestCase {
         XCTAssertEqual(sum, bank.totalValue)
     }
     
-    private func doTransactionsParallel(from fID: Int? = nil, to tID: Int? = nil) {
-        let cores = ProcessInfo.processInfo.activeProcessorCount
+    private func doTransactionsParallel(from fID: Int? = nil, to tID: Int? = nil, queues: Int = ProcessInfo.processInfo.activeProcessorCount) {
         let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = cores
+        queue.maxConcurrentOperationCount = queues
         
-        (0 ..< cores).forEach { _ in
+        (0 ..< queues).forEach { _ in
             queue.addOperation {
                 self.doTransactions(from: fID, to: tID)
             }
@@ -59,7 +58,7 @@ class STMTests: XCTestCase {
     }
     
     func testBankParallel() {
-        doTransactionsParallel()
+        doTransactionsParallel(queues: 16)
         XCTAssertEqual(sum, bank.totalValue)
     }
     

@@ -17,7 +17,7 @@ struct BackoffIterator: IteratorProtocol {
             power += 1
         }
         
-        return pow(2.0, power) / 1_000_000_000
+        return pow(2.0, power) / 1_000_000
     }
     
 }

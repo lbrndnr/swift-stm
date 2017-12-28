@@ -67,6 +67,7 @@ class Barrier {
             readReferences.removeAll()
         }
         catch TransactionError.collision {
+            print("collision")
             writtenReferences.forEach { $0.reference?.rollback() }
             readReferences.forEach { $0.reference?.reset() }
             

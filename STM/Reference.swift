@@ -31,7 +31,7 @@ public final class Reference<V> : Referenceable {
     fileprivate var value: V
     fileprivate var newValue: V?
     
-    private var access = AtomicUInt64(0)
+    private var access = AtomicUInt64()
     
     private var currentBarrier: Barrier? {
         return Thread.current.barrier
@@ -64,8 +64,10 @@ public final class Reference<V> : Referenceable {
         let sID = UInt64(barrier.identifier) << 32
         let cr = numberOfReads(from: access.load())
         let nr: UInt64 = barrier.isReading(signature: signature) ? cr : cr + 1
-        let previouslyRead = access.CAS(current: sID + cr, future: sID + nr)
-        let noPreviousRead = access.CAS(current: cr, future: nr)
+        let ca = access.load()
+        
+        let previouslyRead = ca == sID + cr && access.CAS(current: sID + cr, future: sID + nr)
+        let noPreviousRead = !previouslyRead && ca == cr && access.CAS(current: cr, future: nr)
         
         guard noPreviousRead || previouslyRead else {
             throw TransactionError.collision
@@ -82,9 +84,11 @@ public final class Reference<V> : Referenceable {
         
         let sID = UInt64(barrier.identifier) << 32
         let cr = numberOfReads(from: access.load())
-        let previouslyWritten = access.CAS(current: sID + cr, future: sID + cr)
-        let noPreviousRead = barrier.isReading(signature: signature) && access.CAS(current: 1, future: sID + 1)
-        let noPreviousAccess = access.CAS(current: 0, future: sID)
+        let ca = access.load()
+        
+        let previouslyWritten = ca == sID + cr && access.CAS(current: sID + cr, future: sID + cr)
+        let noPreviousRead = !previouslyWritten && barrier.isReading(signature: signature) && ca == 1 && access.CAS(current: 1, future: sID + 1)
+        let noPreviousAccess = !noPreviousRead && ca == 0 && access.CAS(current: 0, future: sID)
         
         guard noPreviousRead || noPreviousAccess || previouslyWritten else {
             throw TransactionError.collision
@@ -115,16 +119,18 @@ extension Reference: CustomDebugStringConvertible {
     public var debugDescription: String {
         return "Reference(value: \(value), info:\(debugInfo ?? ""))"
     }
+    
 }
 
 extension String {
-    /// optionally change to use "Character" type instead
+    
     public func pad(with padding: String, toLength length: Int) -> String {
-        let paddingWidth = length - self.characters.count
+        let paddingWidth = length - self.lengthOfBytes(using: .utf8)
         guard paddingWidth > 0 else { return self }
         
         return String(repeating: padding, count: paddingWidth) + self
     }
+    
 }
 
 extension UInt64 {
