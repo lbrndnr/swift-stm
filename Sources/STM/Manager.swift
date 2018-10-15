@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias Identifier = UInt32
+typealias Identifier = UInt64
 
 class Manager {
     
