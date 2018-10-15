@@ -67,7 +67,6 @@ class Barrier {
             readReferences.removeAll()
         }
         catch TransactionError.collision {
-//            print("collision")
             writtenReferences.forEach { $0.reference?.rollback() }
             readReferences.forEach { $0.reference?.reset() }
             
@@ -83,9 +82,7 @@ class Barrier {
     
     func retry(in time: TimeInterval? = nil) {
         if let time = time {
-//            print("go to sleep \(identifier) for \(time) at \(Date())")
             Thread.sleep(forTimeInterval: time)
-//            print("good morning \(identifier) at \(Date())")
         }
         
         execute()
