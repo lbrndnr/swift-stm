@@ -62,14 +62,5 @@ func transfer(from: Account, to: Account, amount: Int) -> Bool {
 
 I must admit that the syntax is a bit clumsy as of now...
 
-## Installation
-
-```
-github "lbrndnr/swift-stm"
-```
-
-## Author
-I'm Laurin Brandner, I'm on [Twitter](https://twitter.com/lbrndnr).
-
 ## License
 swift-stm is licensed under the [MIT License](http://opensource.org/licenses/mit-license.php).
