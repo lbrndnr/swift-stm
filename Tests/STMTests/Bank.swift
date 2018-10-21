@@ -17,8 +17,7 @@ class Bank {
         var res = 0
         atomic {
             res = self.accounts.reduce(0) { i, acc in
-                let v = try? acc.balance.get()
-                return i + (v ?? 0)
+                return i + acc.balance
             }
         }
         
@@ -36,15 +35,13 @@ class Bank {
     @discardableResult func transfer(from: Account, to: Account, amount: Int) -> Bool {
         var res = false
         
-        atomic {            
-            let i = try from.balance.get()
-            
-            guard i >= amount else {
+        atomic {
+            guard from.balance >= amount else {
                 return
             }
             
-            try from.balance.set(i - amount)
-            try to.balance.set(to.balance.get() + amount)
+            from.balance.set(from.balance - amount)
+            to.balance.set(to.balance + amount)
             
             res = true
         }

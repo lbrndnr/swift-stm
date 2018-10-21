@@ -8,6 +8,8 @@
 
 import Foundation
 
+private let transactionNotificationName = Notification.Name("didCommitTransaction")
+
 class Barrier {
     
     weak var thread: Thread?
@@ -23,11 +25,12 @@ class Barrier {
     fileprivate var writtenReferences = Set<Signature>()
     
     private var backoff = BackoffIterator()
+    private var blocked = false
     
     // MARK: - Initialization
     
     init() {
-        self.identifier = Manager.shared.generateNewIdentifier()
+        identifier = Manager.shared.generateNewIdentifier()
     }
     
     deinit {
@@ -36,11 +39,15 @@ class Barrier {
     
     // MARK: -
     
-    func isReading(signature: Signature) -> Bool {
+    func isAccessing(_ signature: Signature) -> Bool {
+        return isReading(signature) || isWriting(signature)
+    }
+    
+    func isReading(_ signature: Signature) -> Bool {
         return readReferences.contains(signature)
     }
     
-    func isWriting(signature: Signature) -> Bool {
+    func isWriting(_ signature: Signature) -> Bool {
         return writtenReferences.contains(signature)
     }
     
@@ -57,35 +64,40 @@ class Barrier {
             return
         }
         
-        do {
-            try transaction()
-            
-            writtenReferences.forEach { $0.reference?.commit() }
-            readReferences.forEach { $0.reference?.reset() }
-            
-            writtenReferences.removeAll()
-            readReferences.removeAll()
-        }
-        catch TransactionError.collision {
-            writtenReferences.forEach { $0.reference?.rollback() }
-            readReferences.forEach { $0.reference?.reset() }
-            
-            writtenReferences.removeAll()
-            readReferences.removeAll()
-            
-            retry(in: backoff.next()!)
-        }
-        catch (let error) {
-            print(error)
-        }
+        transaction()
+        
+        writtenReferences.forEach { $0.reference?.commit() }
+        readReferences.forEach { $0.reference?.reset() }
+        
+        writtenReferences.removeAll()
+        readReferences.removeAll()
+        
+        NotificationCenter.default.post(name: transactionNotificationName, object: self)
     }
     
-    func retry(in time: TimeInterval? = nil) {
-        if let time = time {
-            Thread.sleep(forTimeInterval: time)
+    func wait(for barrier: Barrier, conflict signature: Signature) {
+        writtenReferences.forEach { $0.reference?.rollback() }
+        readReferences.forEach { $0.reference?.reset() }
+        
+        writtenReferences.removeAll()
+        readReferences.removeAll()
+        
+        blocked = barrier.isAccessing(signature)
+        print("block", identifier)
+        if blocked {
+            NotificationCenter.default.addObserver(forName: transactionNotificationName, object: barrier, queue: .main) { _ in
+                print("unblock", barrier.identifier)
+                self.blocked = false
+            }
+            
+            while (blocked ) {}
         }
         
         execute()
+    }
+    
+    func retry() {
+        
     }
     
 }

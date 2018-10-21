@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias Transaction = () throws -> ()
+public typealias Transaction = () -> ()
 
 public func atomic(transaction: @escaping Transaction) {
     let thread = Thread.current

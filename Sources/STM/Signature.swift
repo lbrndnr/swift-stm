@@ -14,7 +14,7 @@ struct Signature {
     var identifier: String
     
     init() {
-        self.identifier = UUID().uuidString
+        identifier = UUID().uuidString
     }
     
 }

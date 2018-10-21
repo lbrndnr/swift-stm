@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		49A13ECD2175332B00E5FDF6 /* AccessQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A13ECC2175332B00E5FDF6 /* AccessQueue.swift */; };
 		OBJ_108 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* Account.swift */; };
 		OBJ_109 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* Bank.swift */; };
 		OBJ_110 /* STMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* STMTests.swift */; };
@@ -104,6 +105,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		49A13ECC2175332B00E5FDF6 /* AccessQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessQueue.swift; sourceTree = "<group>"; };
 		"Atomics::Atomics::Product" /* Atomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Atomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Atomics::CAtomics::Product" /* CAtomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CAtomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Barrier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Barrier.swift; sourceTree = "<group>"; };
@@ -257,7 +259,7 @@
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -266,7 +268,6 @@
 				OBJ_27 /* Dependencies */,
 				OBJ_39 /* Products */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -287,6 +288,7 @@
 				OBJ_14 /* Manager.swift */,
 				OBJ_15 /* Operators.swift */,
 				OBJ_16 /* Reference.swift */,
+				49A13ECC2175332B00E5FDF6 /* AccessQueue.swift */,
 				OBJ_18 /* Signature.swift */,
 				OBJ_19 /* TInt.swift */,
 				OBJ_20 /* Transaction.swift */,
@@ -423,7 +425,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_39 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -483,6 +485,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_76 /* BackoffIterator.swift in Sources */,
+				49A13ECD2175332B00E5FDF6 /* AccessQueue.swift in Sources */,
 				OBJ_77 /* Barrier.swift in Sources */,
 				OBJ_78 /* Error.swift in Sources */,
 				OBJ_79 /* Thread.swift in Sources */,
