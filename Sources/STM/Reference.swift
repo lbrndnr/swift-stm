@@ -7,6 +7,7 @@
 //
 import Foundation
 import Atomics
+import AtomicLinkedList
 
 protocol Referenceable: AnyObject {
     
@@ -29,8 +30,8 @@ public final class Reference<V> : Referenceable {
         return Thread.current.barrier
     }
     
-    private var reads = AccessQueue()
-    private var writes = AccessQueue()
+    private var reads = AtomicLinkedList<Barrier>()
+    private var writes = AtomicLinkedList<Barrier>()
     
     // MARK: - Initialization
     
@@ -50,8 +51,8 @@ public final class Reference<V> : Referenceable {
             barrier.wait(for: blockingBarrier, conflict: signature)
             return value
         }
-        
-        reads.append(barrier: barrier)
+
+        let ticket = reads.append(barrier)
         barrier.markAsRead(using: signature)
         
         return newValue ?? value
@@ -71,7 +72,7 @@ public final class Reference<V> : Referenceable {
             return
         }
 
-        writes.append(barrier: barrier)
+        writes.enqueue(barrier)
         barrier.markAsWritten(using: signature)
         
         newValue = val
@@ -90,8 +91,8 @@ public final class Reference<V> : Referenceable {
         if barrier.isWriting(signature) {
             newValue = nil
         }
-        writes.remove(barrier: barrier)
-        reads.remove(barrier: barrier)
+        writes.remove(barrier)
+        reads.remove(barrier)
     }
     
     func reset() {
@@ -99,7 +100,7 @@ public final class Reference<V> : Referenceable {
             abort()
         }
         
-        reads.remove(barrier: barrier)
+        reads.remove(barrier)
     }
     
 }

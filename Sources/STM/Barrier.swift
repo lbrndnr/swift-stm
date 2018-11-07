@@ -51,7 +51,7 @@ class Barrier {
         return writtenReferences.contains(signature)
     }
     
-    func markAsRead(using signature: Signature) {
+    func markAsRead(using ticket: Signature) {
         readReferences.update(with: signature)
     }
     
@@ -98,6 +98,22 @@ class Barrier {
     
     func retry() {
         
+    }
+    
+}
+
+extension Barrier: Hashable {
+    
+    var hashValue: Int {
+        return identifier.hashValue
+    }
+    
+}
+
+extension Barrier: Equatable {
+    
+    static func == (lhs: Barrier, rhs: Barrier) -> Bool {
+        return lhs.identifier == rhs.identifier
     }
     
 }
