@@ -107,11 +107,7 @@ final class Barrier {
         collided = true
     }
     
-    func retry() {
-        retry(in: nil)
-    }
-    
-    private func retry(in delay: TimeInterval?) {
+    func retry(in delay: TimeInterval? = nil) {
         if let delay = delay {
             Thread.sleep(forTimeInterval: delay)
         }
