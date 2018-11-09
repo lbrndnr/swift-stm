@@ -14,6 +14,9 @@ protocol Referenceable: AnyObject {
     func commit()
     func reset(reads: Bool, writes: Bool)
     
+    func lock()
+    func unlock()
+    
 }
 
 public typealias Ref<V> = Reference<V>
@@ -30,6 +33,7 @@ public final class Reference<V> : Referenceable {
     
     private var readers = AtomicLinkedList<Barrier>()
     private var writers = AtomicLinkedList<Barrier>()
+    private var spinlock = OS_SPINLOCK_INIT
     
     // MARK: - Initialization
     
@@ -56,12 +60,27 @@ public final class Reference<V> : Referenceable {
         barrier.write(newValue, to: signature)
     }
     
-    func commit() {
-        guard let newValue = barrier.read(signature) as? V? else {
-            abort()
+    func lock() {
+        OSSpinLockLock(&spinlock)
+        
+        if barrier.isWriting(signature) {
+            readers.filter { $0 != barrier }
+                   .forEach { $0.abort() }
         }
-            
-        value = newValue!
+        
+        writers.filter { $0 != barrier }
+               .forEach { $0.abort() }
+    }
+    
+    func unlock() {
+        OSSpinLockUnlock(&spinlock)
+    }
+    
+    func commit() {
+        if let newValue = barrier.read(signature) as? V {
+            value = newValue
+        }
+        
         reset(reads: true, writes: true)
     }
     

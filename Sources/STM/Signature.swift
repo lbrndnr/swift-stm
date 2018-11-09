@@ -7,14 +7,17 @@
 //
 
 import Foundation
+import Atomics
+
+private var IDCounter = AtomicUInt64()
 
 struct Signature {
     
     weak var reference: Referenceable?
-    var identifier: String
+    var ID: UInt64
     
     init() {
-        identifier = UUID().uuidString
+        ID = IDCounter.increment()
     }
     
 }
@@ -22,11 +25,11 @@ struct Signature {
 extension Signature: Hashable {
     
     var hashValue: Int {
-        return identifier.hashValue
+        return ID.hashValue
     }
     
 }
 
 func ==(lhs: Signature, rhs: Signature) -> Bool {
-    return lhs.identifier == rhs.identifier
+    return lhs.ID == rhs.ID
 }

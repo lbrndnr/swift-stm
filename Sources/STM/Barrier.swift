@@ -10,24 +10,19 @@ import Foundation
 
 private let transactionNotificationName = Notification.Name("didCommitTransaction")
 
-private let semaphore = DispatchSemaphore(value: 1)
-
 final class Barrier {
     
     weak var thread: Thread?
     
     let identifier: Identifier
-    var transaction: Transaction? {
-        didSet {
-            backoff = BackoffIterator()
-        }
-    }
     
     fileprivate var reads = Set<Signature>()
     fileprivate var writes = [Signature: Any]()
     
+    private var transaction: Transaction?
     private var backoff = BackoffIterator()
     private var blocked = false
+    private var collided = false
     
     // MARK: - Initialization
     
@@ -66,51 +61,64 @@ final class Barrier {
         writes[signature] = element
     }
     
-    func execute() {
-        guard let transaction = transaction else {
+    func perform(_ t: @escaping Transaction) {
+        backoff = BackoffIterator()
+        collided = false
+        transaction = t
+        
+        t()
+        
+        let accesses = Set(Array(writes.keys) + Array(reads)).sorted { $0.ID < $1.ID }
+        func rollback() {
+            accesses.forEach { $0.reference?.reset(reads: true, writes: true) }
+            
+            writes.removeAll()
+            reads.removeAll()
+            
+            retry(in: backoff.next())
+        }
+        
+        guard !collided else {
+            rollback()
+            
             return
         }
         
-        transaction()
+        accesses.forEach { $0.reference?.lock() }
         
-        semaphore.wait()
-        
-        writes.forEach { (signature, _) in
-            signature.reference?.commit()
+        guard !collided else {
+            accesses.forEach { $0.reference?.unlock() }
+            rollback()
+            
+            return
         }
-        reads.forEach { $0.reference?.reset(reads: true, writes: false) }
         
-        semaphore.signal()
+        accesses.forEach { $0.reference?.commit() }
+        accesses.forEach { $0.reference?.unlock() }
         
         writes.removeAll()
         reads.removeAll()
+        transaction = nil
         
         NotificationCenter.default.post(name: transactionNotificationName, object: self)
     }
     
-    func wait(for barrier: Barrier, conflict signature: Signature) {
-//        writtenReferences.forEach { $0.reference?.rollback() }
-//        readReferences.forEach { $0.reference?.reset() }
-//        
-//        writtenReferences.removeAll()
-//        readReferences.removeAll()
-//        
-//        blocked = barrier.isAccessing(signature)
-//        print("block", identifier)
-//        if blocked {
-//            NotificationCenter.default.addObserver(forName: transactionNotificationName, object: barrier, queue: .main) { _ in
-//                print("unblock", barrier.identifier)
-//                self.blocked = false
-//            }
-//            
-//            while (blocked ) {}
-//        }
-//        
-//        execute()
+    func abort() {
+        collided = true
     }
     
     func retry() {
-        
+        retry(in: nil)
+    }
+    
+    private func retry(in delay: TimeInterval?) {
+        if let delay = delay {
+            Thread.sleep(forTimeInterval: delay)
+        }
+
+        if let transaction = transaction {
+            perform(transaction)
+        }
     }
     
 }

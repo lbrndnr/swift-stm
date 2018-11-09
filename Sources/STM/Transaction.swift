@@ -21,8 +21,7 @@ public func atomic(transaction: @escaping Transaction) {
     }
     
     let barrier = thread.barrier!
-    barrier.transaction = transaction
-    barrier.execute()
+    barrier.perform(transaction)
 }
 
 public func retry() {
