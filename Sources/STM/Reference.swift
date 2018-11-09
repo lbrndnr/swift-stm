@@ -12,8 +12,7 @@ import AtomicLinkedList
 protocol Referenceable: AnyObject {
     
     func commit()
-    func rollback()
-    func reset()
+    func reset(reads: Bool, writes: Bool)
     
 }
 
@@ -23,15 +22,14 @@ public final class Reference<V> : Referenceable {
     
     var signature = Signature()
     
-    fileprivate var value: V
-    fileprivate var newValue: V?
+    private var value: V
     
-    private var currentBarrier: Barrier? {
-        return Thread.current.barrier
+    private var barrier: Barrier {
+        return Thread.current.barrier!
     }
     
-    private var reads = AtomicLinkedList<Barrier>()
-    private var writes = AtomicLinkedList<Barrier>()
+    private var readers = AtomicLinkedList<Barrier>()
+    private var writers = AtomicLinkedList<Barrier>()
     
     // MARK: - Initialization
     
@@ -43,64 +41,37 @@ public final class Reference<V> : Referenceable {
     // MARK: -
     
     public func get() -> V {
-        guard let barrier = currentBarrier else {
-            abort()
+        if !barrier.isReading(signature) {
+            readers.append(barrier)
         }
         
-        if let blockingBarrier = writes.contains(notEqual: barrier) {
-            barrier.wait(for: blockingBarrier, conflict: signature)
-            return value
-        }
-
-        let ticket = reads.append(barrier)
-        barrier.markAsRead(using: signature)
-        
-        return newValue ?? value
+        return barrier.read(signature) as? V ?? value
     }
     
-    public func set(_ val: V) {
-        guard let barrier = currentBarrier else {
-            abort()
+    public func set(_ newValue: V) {
+        if !barrier.isWriting(signature) {
+            writers.append(barrier)
         }
-
-        if let blockingBarrier = reads.contains(notEqual: barrier) {
-            barrier.wait(for: blockingBarrier, conflict: signature)
-            return
-        }
-        if let blockingBarrier = writes.contains(notEqual: barrier) {
-            barrier.wait(for: blockingBarrier, conflict: signature)
-            return
-        }
-
-        writes.enqueue(barrier)
-        barrier.markAsWritten(using: signature)
         
-        newValue = val
+        barrier.write(newValue, to: signature)
     }
     
     func commit() {
-        value = newValue ?? value
-        rollback()
-    }
-    
-    func rollback() {
-        guard let barrier = currentBarrier else {
+        guard let newValue = barrier.read(signature) as? V? else {
             abort()
         }
-        
-        if barrier.isWriting(signature) {
-            newValue = nil
-        }
-        writes.remove(barrier)
-        reads.remove(barrier)
+            
+        value = newValue!
+        reset(reads: true, writes: true)
     }
     
-    func reset() {
-        guard let barrier = currentBarrier else {
-            abort()
+    func reset(reads: Bool, writes: Bool) {
+        if reads && barrier.isReading(signature) {
+            readers.remove(barrier)
         }
-        
-        reads.remove(barrier)
+        if writes && barrier.isWriting(signature) {
+            writers.remove(barrier)
+        }
     }
-    
+        
 }
