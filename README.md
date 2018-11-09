@@ -4,7 +4,7 @@
 [![License](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://github.com/lbrndnr/ImagePickerSheetController/blob/master/LICENSE)
 
 ## About
-swift-stm is an optimistic and lock free [software transactional memory](https://en.wikipedia.org/wiki/Software_transactional_memory) written in Swift. It's very rudimental and really only a draft as of now. I wouldn't be using it in production could if I were you. Feel free to try it out though :)
+swift-stm is an optimistic and lock free [software transactional memory](https://en.wikipedia.org/wiki/Software_transactional_memory) written in Swift. It's very rudimental and really only a draft as of now. I wouldn't be using it in production code if I were you. Feel free to try it out though :)
 
 ## What does it do exactly?
 
