@@ -11,7 +11,7 @@ import Atomics
 
 private var IDCounter = AtomicUInt64()
 
-struct Signature {
+struct Signature: Identifiable {
     
     weak var reference: Referenceable?
     var ID: UInt64
@@ -22,14 +22,10 @@ struct Signature {
     
 }
 
-extension Signature: Hashable {
+extension Signature: Equatable {
     
-    var hashValue: Int {
-        return ID.hashValue
+    static func == (lhs: Signature, rhs: Signature) -> Bool {
+        return lhs.ID == rhs.ID
     }
     
-}
-
-func ==(lhs: Signature, rhs: Signature) -> Bool {
-    return lhs.ID == rhs.ID
 }

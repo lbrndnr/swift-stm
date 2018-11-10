@@ -21,10 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		4950E5942196D914004DAF66 /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4950E5932196D914004DAF66 /* Identifiable.swift */; };
 		49594B8F2196505C00A9D2EC /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49594B8D2196501100A9D2EC /* Thread.swift */; };
 		OBJ_105 /* BackoffIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* BackoffIterator.swift */; };
 		OBJ_106 /* Barrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* Barrier.swift */; };
-		OBJ_109 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* Manager.swift */; };
 		OBJ_110 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* Operators.swift */; };
 		OBJ_111 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* Reference.swift */; };
 		OBJ_112 /* Signature.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_17 /* Signature.swift */; };
@@ -141,12 +141,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4950E5932196D914004DAF66 /* Identifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifiable.swift; sourceTree = "<group>"; };
 		49594B8D2196501100A9D2EC /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
 		"AtomicLinkedList::AtomicLinkedList::Product" /* AtomicLinkedList.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AtomicLinkedList.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Atomics::Atomics::Product" /* Atomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Atomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Atomics::CAtomics::Product" /* CAtomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CAtomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_10 /* Barrier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Barrier.swift; sourceTree = "<group>"; };
-		OBJ_14 /* Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 		OBJ_15 /* Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
 		OBJ_16 /* Reference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
 		OBJ_17 /* Signature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signature.swift; sourceTree = "<group>"; };
@@ -327,7 +327,7 @@
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -336,7 +336,6 @@
 				OBJ_26 /* Dependencies */,
 				OBJ_46 /* Products */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
@@ -350,10 +349,10 @@
 		OBJ_8 /* STM */ = {
 			isa = PBXGroup;
 			children = (
+				4950E5932196D914004DAF66 /* Identifiable.swift */,
 				49594B8D2196501100A9D2EC /* Thread.swift */,
 				OBJ_9 /* BackoffIterator.swift */,
 				OBJ_10 /* Barrier.swift */,
-				OBJ_14 /* Manager.swift */,
 				OBJ_15 /* Operators.swift */,
 				OBJ_16 /* Reference.swift */,
 				OBJ_17 /* Signature.swift */,
@@ -526,7 +525,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_46 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -551,7 +550,7 @@
 			files = (
 				OBJ_105 /* BackoffIterator.swift in Sources */,
 				OBJ_106 /* Barrier.swift in Sources */,
-				OBJ_109 /* Manager.swift in Sources */,
+				4950E5942196D914004DAF66 /* Identifiable.swift in Sources */,
 				OBJ_110 /* Operators.swift in Sources */,
 				OBJ_111 /* Reference.swift in Sources */,
 				OBJ_112 /* Signature.swift in Sources */,

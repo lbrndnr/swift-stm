@@ -21,7 +21,7 @@ protocol Referenceable: AnyObject {
 
 public typealias Ref<V> = Reference<V>
 
-public final class Reference<V> : Referenceable {
+public final class Reference<V>: Referenceable {
     
     var signature = Signature()
     

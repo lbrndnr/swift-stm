@@ -7,14 +7,17 @@
 //
 
 import Foundation
+import Atomics
 
 private let transactionNotificationName = Notification.Name("didCommitTransaction")
 
-final class Barrier {
+private var IDCounter = AtomicUInt64()
+
+final class Barrier: Identifiable {
     
     weak var thread: Thread?
     
-    let identifier: Identifier
+    let ID: UInt64
     
     private var reads = Set<Signature>()
     private var writes = [Signature: Any]()
@@ -26,11 +29,7 @@ final class Barrier {
     // MARK: - Initialization
     
     init() {
-        identifier = Manager.shared.generateNewIdentifier()
-    }
-    
-    deinit {
-        Manager.shared.recycle(identifier)
+        ID = IDCounter.increment()
     }
     
     // MARK: -
@@ -118,18 +117,10 @@ final class Barrier {
     
 }
 
-extension Barrier: Hashable {
-    
-    var hashValue: Int {
-        return identifier.hashValue
-    }
-    
-}
-
 extension Barrier: Equatable {
     
-    static func == (lhs: Barrier, rhs: Barrier) -> Bool {
-        return lhs.identifier == rhs.identifier
+    static func ==(lhs: Barrier, rhs: Barrier) -> Bool {
+        return lhs.ID == rhs.ID
     }
     
 }
