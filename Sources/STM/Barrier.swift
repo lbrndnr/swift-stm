@@ -16,13 +16,12 @@ final class Barrier {
     
     let identifier: Identifier
     
-    fileprivate var reads = Set<Signature>()
-    fileprivate var writes = [Signature: Any]()
+    private var reads = Set<Signature>()
+    private var writes = [Signature: Any]()
     
     private var transaction: Transaction?
     private var backoff = BackoffIterator()
-    private var blocked = false
-    private var collided = false
+    var collided = false
     
     // MARK: - Initialization
     

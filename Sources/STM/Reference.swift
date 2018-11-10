@@ -62,14 +62,6 @@ public final class Reference<V> : Referenceable {
     
     func lock() {
         OSSpinLockLock(&spinlock)
-        
-        if barrier.isWriting(signature) {
-            readers.filter { $0 != barrier }
-                   .forEach { $0.abort() }
-        }
-        
-        writers.filter { $0 != barrier }
-               .forEach { $0.abort() }
     }
     
     func unlock() {
@@ -80,6 +72,14 @@ public final class Reference<V> : Referenceable {
         if let newValue = barrier.read(signature) as? V {
             value = newValue
         }
+        
+        if barrier.isWriting(signature) {
+            readers.filter { $0 != barrier }
+                   .forEach { $0.abort() }
+        }
+        
+        writers.filter { $0 != barrier }
+               .forEach { $0.abort() }
         
         reset(reads: true, writes: true)
     }
