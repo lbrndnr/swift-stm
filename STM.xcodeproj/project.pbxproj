@@ -22,6 +22,7 @@
 
 /* Begin PBXBuildFile section */
 		4950E5942196D914004DAF66 /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4950E5932196D914004DAF66 /* Identifiable.swift */; };
+		4950E5972196E862004DAF66 /* TSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4950E5962196E862004DAF66 /* TSequence.swift */; };
 		49594B8F2196505C00A9D2EC /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49594B8D2196501100A9D2EC /* Thread.swift */; };
 		OBJ_105 /* BackoffIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* BackoffIterator.swift */; };
 		OBJ_106 /* Barrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* Barrier.swift */; };
@@ -142,6 +143,7 @@
 
 /* Begin PBXFileReference section */
 		4950E5932196D914004DAF66 /* Identifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifiable.swift; sourceTree = "<group>"; };
+		4950E5962196E862004DAF66 /* TSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSequence.swift; sourceTree = "<group>"; };
 		49594B8D2196501100A9D2EC /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
 		"AtomicLinkedList::AtomicLinkedList::Product" /* AtomicLinkedList.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AtomicLinkedList.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Atomics::Atomics::Product" /* Atomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Atomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -229,6 +231,7 @@
 			children = (
 				OBJ_15 /* Operators.swift */,
 				OBJ_18 /* TNumeric.swift */,
+				4950E5962196E862004DAF66 /* TSequence.swift */,
 			);
 			path = TType;
 			sourceTree = "<group>";
@@ -557,6 +560,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_105 /* BackoffIterator.swift in Sources */,
+				4950E5972196E862004DAF66 /* TSequence.swift in Sources */,
 				OBJ_106 /* Barrier.swift in Sources */,
 				4950E5942196D914004DAF66 /* Identifiable.swift in Sources */,
 				OBJ_110 /* Operators.swift in Sources */,

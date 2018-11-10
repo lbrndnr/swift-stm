@@ -21,11 +21,11 @@ protocol Referenceable: AnyObject {
 
 public typealias Ref<V> = Reference<V>
 
-public final class Reference<V>: Referenceable {
+public final class Reference<Value>: Referenceable {
     
     var signature = Signature()
     
-    private var value: V
+    private var value: Value
     
     private var barrier: Barrier {
         return Thread.current.barrier!
@@ -37,22 +37,22 @@ public final class Reference<V>: Referenceable {
     
     // MARK: - Initialization
     
-    public init(_ v: V) {
+    public init(_ v: Value) {
         value = v
         signature.reference = self
     }
     
     // MARK: -
     
-    public func get() -> V {
+    public func get() -> Value {
         if !barrier.isReading(signature) {
             readers.append(barrier)
         }
         
-        return barrier.read(signature) as? V ?? value
+        return barrier.read(signature) as? Value ?? value
     }
     
-    public func set(_ newValue: V) {
+    public func set(_ newValue: Value) {
         if !barrier.isWriting(signature) {
             writers.append(barrier)
         }
@@ -69,7 +69,7 @@ public final class Reference<V>: Referenceable {
     }
     
     func commit() {
-        if let newValue = barrier.read(signature) as? V {
+        if let newValue = barrier.read(signature) as? Value {
             value = newValue
         }
         
