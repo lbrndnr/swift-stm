@@ -33,7 +33,7 @@ public final class Reference<V> : Referenceable {
     
     private var readers = AtomicLinkedList<Barrier>()
     private var writers = AtomicLinkedList<Barrier>()
-    private var spinlock = OS_SPINLOCK_INIT
+    private var commitLock = OS_SPINLOCK_INIT
     
     // MARK: - Initialization
     
@@ -61,11 +61,11 @@ public final class Reference<V> : Referenceable {
     }
     
     func lock() {
-        OSSpinLockLock(&spinlock)
+        OSSpinLockLock(&commitLock)
     }
     
     func unlock() {
-        OSSpinLockUnlock(&spinlock)
+        OSSpinLockUnlock(&commitLock)
     }
     
     func commit() {
