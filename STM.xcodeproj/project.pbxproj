@@ -28,7 +28,7 @@
 		OBJ_110 /* Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* Operators.swift */; };
 		OBJ_111 /* Reference.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* Reference.swift */; };
 		OBJ_112 /* Signature.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_17 /* Signature.swift */; };
-		OBJ_113 /* TInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_18 /* TInt.swift */; };
+		OBJ_113 /* TNumeric.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_18 /* TNumeric.swift */; };
 		OBJ_114 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* Transaction.swift */; };
 		OBJ_116 /* AtomicLinkedList.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "AtomicLinkedList::AtomicLinkedList::Product" /* AtomicLinkedList.framework */; };
 		OBJ_117 /* Atomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "Atomics::Atomics::Product" /* Atomics.framework */; };
@@ -150,7 +150,7 @@
 		OBJ_15 /* Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operators.swift; sourceTree = "<group>"; };
 		OBJ_16 /* Reference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reference.swift; sourceTree = "<group>"; };
 		OBJ_17 /* Signature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signature.swift; sourceTree = "<group>"; };
-		OBJ_18 /* TInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TInt.swift; sourceTree = "<group>"; };
+		OBJ_18 /* TNumeric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TNumeric.swift; sourceTree = "<group>"; };
 		OBJ_19 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		OBJ_22 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		OBJ_23 /* Bank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
@@ -224,6 +224,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4950E5952196DC8E004DAF66 /* TType */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_15 /* Operators.swift */,
+				OBJ_18 /* TNumeric.swift */,
+			);
+			path = TType;
+			sourceTree = "<group>";
+		};
 		OBJ_20 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -349,14 +358,13 @@
 		OBJ_8 /* STM */ = {
 			isa = PBXGroup;
 			children = (
+				4950E5952196DC8E004DAF66 /* TType */,
 				4950E5932196D914004DAF66 /* Identifiable.swift */,
 				49594B8D2196501100A9D2EC /* Thread.swift */,
 				OBJ_9 /* BackoffIterator.swift */,
 				OBJ_10 /* Barrier.swift */,
-				OBJ_15 /* Operators.swift */,
 				OBJ_16 /* Reference.swift */,
 				OBJ_17 /* Signature.swift */,
-				OBJ_18 /* TInt.swift */,
 				OBJ_19 /* Transaction.swift */,
 			);
 			name = STM;
@@ -554,7 +562,7 @@
 				OBJ_110 /* Operators.swift in Sources */,
 				OBJ_111 /* Reference.swift in Sources */,
 				OBJ_112 /* Signature.swift in Sources */,
-				OBJ_113 /* TInt.swift in Sources */,
+				OBJ_113 /* TNumeric.swift in Sources */,
 				49594B8F2196505C00A9D2EC /* Thread.swift in Sources */,
 				OBJ_114 /* Transaction.swift in Sources */,
 			);
