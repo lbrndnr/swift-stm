@@ -7,26 +7,26 @@
 //
 
 import Foundation
+import Atomics
+import AtomicLinkedList
 
-struct Signature {
+private var IDCounter = AtomicUInt64()
+
+struct Signature: Identifiable {
     
     weak var reference: Referenceable?
-    var identifier: String
+    var ID: UInt64
     
     init() {
-        self.identifier = UUID().uuidString
+        ID = IDCounter.increment()
     }
     
 }
 
-extension Signature: Hashable {
+extension Signature: Equatable {
     
-    var hashValue: Int {
-        return identifier.hashValue
+    static func == (lhs: Signature, rhs: Signature) -> Bool {
+        return lhs.ID == rhs.ID
     }
     
-}
-
-func ==(lhs: Signature, rhs: Signature) -> Bool {
-    return lhs.identifier == rhs.identifier
 }

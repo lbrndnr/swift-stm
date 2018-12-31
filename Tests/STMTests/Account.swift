@@ -17,7 +17,6 @@ class Account {
     init(ID: Int, balance: Int) {
         self.ID = ID
         self.balance = Ref(balance)
-        self.balance.debugInfo = ID
     }
     
 }

@@ -7,85 +7,120 @@
 //
 
 import Foundation
+import Atomics
 
-class Barrier {
+private let transactionNotificationName = Notification.Name("didCommitTransaction")
+
+private var IDCounter = AtomicUInt64()
+
+final class Barrier: Identifiable {
     
     weak var thread: Thread?
     
-    let identifier: Identifier
-    var transaction: Transaction? {
-        didSet {
-            backoff = BackoffIterator()
-        }
-    }
+    let ID: UInt64
     
-    fileprivate var readReferences = Set<Signature>()
-    fileprivate var writtenReferences = Set<Signature>()
+    private var reads = Set<Signature>()
+    private var writes = [Signature: Any]()
     
+    private var transaction: Transaction?
     private var backoff = BackoffIterator()
+    var collided = false
     
     // MARK: - Initialization
     
     init() {
-        self.identifier = Manager.shared.generateNewIdentifier()
-    }
-    
-    deinit {
-        Manager.shared.recycle(identifier)
+        ID = IDCounter.increment()
     }
     
     // MARK: -
     
-    func isReading(signature: Signature) -> Bool {
-        return readReferences.contains(signature)
+    func isAccessing(_ signature: Signature) -> Bool {
+        return isReading(signature) || isWriting(signature)
     }
     
-    func isWriting(signature: Signature) -> Bool {
-        return writtenReferences.contains(signature)
+    func isReading(_ signature: Signature) -> Bool {
+        return reads.contains(signature)
     }
     
-    func markAsRead(using signature: Signature) {
-        readReferences.update(with: signature)
+    func isWriting(_ signature: Signature) -> Bool {
+        return writes.keys.contains(signature)
     }
     
-    func markAsWritten(using signature: Signature) {
-        writtenReferences.update(with: signature)
+    func read(_ signature: Signature) -> Any? {
+        guard let element = writes[signature] else {
+            reads.update(with: signature)
+            return nil
+        }
+        
+        return element
     }
     
-    func execute() {
-        guard let transaction = transaction else {
+    func write(_ element: Any, to signature: Signature) {
+        writes[signature] = element
+    }
+    
+    func perform(_ t: @escaping Transaction) {
+        backoff = BackoffIterator()
+        collided = false
+        transaction = t
+        
+        t()
+        
+        let accesses = Set(Array(writes.keys) + Array(reads)).sorted { $0.ID < $1.ID }
+        func rollback() {
+            accesses.forEach { $0.reference?.reset(reads: true, writes: true) }
+            
+            writes.removeAll()
+            reads.removeAll()
+            
+            retry(in: backoff.next())
+        }
+        
+        guard !collided else {
+            rollback()
+            
             return
         }
         
-        do {
-            try transaction()
+        accesses.forEach { $0.reference?.lock() }
+        
+        guard !collided else {
+            accesses.forEach { $0.reference?.unlock() }
+            rollback()
             
-            writtenReferences.forEach { $0.reference?.commit() }
-            readReferences.forEach { $0.reference?.reset() }
-            
-            writtenReferences.removeAll()
-            readReferences.removeAll()
+            return
         }
-        catch TransactionError.collision {
-            writtenReferences.forEach { $0.reference?.rollback() }
-            readReferences.forEach { $0.reference?.reset() }
-            
-            writtenReferences.removeAll()
-            readReferences.removeAll()
-            
-            retry(in: backoff.next()!)
+        
+        accesses.forEach { $0.reference?.commit() }
+        accesses.forEach { $0.reference?.unlock() }
+        
+        writes.removeAll()
+        reads.removeAll()
+        transaction = nil
+        
+        NotificationCenter.default.post(name: transactionNotificationName, object: self)
+    }
+    
+    func abort() {
+        collided = true
+    }
+    
+    func retry(in delay: TimeInterval? = nil) {
+        if let delay = delay {
+            Thread.sleep(forTimeInterval: delay)
         }
-        catch (let error) {
-            print(error)
+
+        if let transaction = transaction {
+            perform(transaction)
         }
     }
     
-    func retry(in time: TimeInterval? = nil) {
-        if let time = time {
-            Thread.sleep(forTimeInterval: time)
-        }
-        
-        execute()
+}
+
+extension Barrier: Equatable {
+    
+    static func ==(lhs: Barrier, rhs: Barrier) -> Bool {
+        return lhs.ID == rhs.ID
     }
     
 }
