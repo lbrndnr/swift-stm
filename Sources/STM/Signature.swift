@@ -8,6 +8,7 @@
 
 import Foundation
 import Atomics
+import AtomicLinkedList
 
 private var IDCounter = AtomicUInt64()
 

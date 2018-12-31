@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/glessard/swift-atomics", from: "4.1.3"),
+        .package(path: "../swift-atomics"),
         .package(path: "../AtomicLinkedList")
     ],
     targets: [

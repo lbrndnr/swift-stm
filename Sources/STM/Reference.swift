@@ -46,7 +46,7 @@ public final class Reference<Value>: Referenceable {
     
     public func get() -> Value {
         if !barrier.isReading(signature) {
-            readers.append(barrier)
+            readers.prepend(barrier)
         }
         
         return barrier.read(signature) as? Value ?? value
@@ -54,7 +54,7 @@ public final class Reference<Value>: Referenceable {
     
     public func set(_ newValue: Value) {
         if !barrier.isWriting(signature) {
-            writers.append(barrier)
+            writers.prepend(barrier)
         }
         
         barrier.write(newValue, to: signature)
