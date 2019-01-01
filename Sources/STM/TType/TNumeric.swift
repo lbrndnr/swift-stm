@@ -68,3 +68,28 @@ public func -<T: Numeric>(lhs: T, rhs: Ref<T>) -> T {
 public func -<T: Numeric>(lhs: Ref<T>, rhs: T) -> T {
     return lhs.get() - rhs
 }
+
+public func -=<T: Numeric>(lhs: inout Ref<T>, rhs: T) {
+    lhs.set(lhs.get() - rhs)
+}
+
+public func -=<T: Numeric>(lhs: inout T, rhs: Ref<T>) {
+    lhs -= rhs.get()
+}
+
+public func -=<T: Numeric>(lhs: inout Ref<T>, rhs: Ref<T>) {
+    lhs.set(lhs.get() - rhs.get())
+}
+
+public func +=<T: Numeric>(lhs: inout Ref<T>, rhs: T) {
+    lhs.set(lhs.get() + rhs)
+}
+
+public func +=<T: Numeric>(lhs: inout T, rhs: Ref<T>) {
+    lhs += rhs.get()
+}
+
+public func +=<T: Numeric>(lhs: inout Ref<T>, rhs: Ref<T>) {
+    lhs.set(lhs.get() + rhs.get())
+}
+

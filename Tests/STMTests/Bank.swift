@@ -40,8 +40,8 @@ class Bank {
                 return
             }
             
-            from.balance.set(from.balance - amount)
-            to.balance.set(to.balance + amount)
+            from.balance -= amount
+            to.balance += amount
             
             res = true
         }
