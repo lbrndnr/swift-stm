@@ -13,18 +13,65 @@ private let transactionNotificationName = Notification.Name("didCommitTransactio
 
 private var IDCounter = AtomicUInt64()
 
-final class Barrier: Identifiable {
+enum Status {
+    case normal
+    case failed
+}
+
+fileprivate enum Transaction {
+    case pending(AtomicBlock)
+    case failed(AtomicBlock)
+    case retried(AtomicBlock)
+}
+
+extension Transaction {
     
-    weak var thread: Thread?
+    func fail() -> Transaction {
+        switch self {
+        case .pending(let b):
+            return .failed(b)
+        case .retried(let b):
+            return .failed(b)
+        default:
+            return self
+        }
+    }
+    
+    func retry() -> Transaction {
+        switch self {
+        case .pending(let b):
+            return .retried(b)
+        case .failed(let b):
+            return .retried(b)
+        default:
+            return self
+        }
+    }
+    
+}
+
+final class Barrier: Identifiable {
     
     let ID: UInt64
     
+    var status: Status {
+        guard let last = transactions.last else {
+            return .normal
+        }
+        
+        switch last {
+        case .pending(_):
+            return .normal
+        default:
+            return .failed
+        }
+    }
+    
+    fileprivate var transactions = [Transaction]()
     private var reads = Set<Signature>()
     private var writes = [Signature: Any]()
     
-    private var transaction: Transaction?
     private var backoff = BackoffIterator()
-    var collided = false
     
     // MARK: - Initialization
     
@@ -59,12 +106,19 @@ final class Barrier: Identifiable {
         writes[signature] = element
     }
     
-    func perform(_ t: @escaping Transaction) {
-        backoff = BackoffIterator()
-        collided = false
-        transaction = t
+    func apply(_ block: @escaping AtomicBlock, main: Bool) {
+        if main {
+            transactions = [.pending(block)]
+        }
+        else if status == .failed {
+            transactions.append(.pending(block))
+        }
+        else {
+            return
+        }
         
-        t()
+        backoff = BackoffIterator()
+        block()
         
         let accesses = Set(Array(writes.keys) + Array(reads)).sorted { $0.ID < $1.ID }
         func rollback() {
@@ -76,7 +130,7 @@ final class Barrier: Identifiable {
             retry(in: backoff.next())
         }
         
-        guard !collided else {
+        guard status == .normal else {
             rollback()
             
             return
@@ -84,7 +138,7 @@ final class Barrier: Identifiable {
         
         accesses.forEach { $0.reference?.lock() }
         
-        guard !collided else {
+        guard status == .normal else {
             accesses.forEach { $0.reference?.unlock() }
             rollback()
             
@@ -96,23 +150,27 @@ final class Barrier: Identifiable {
         
         writes.removeAll()
         reads.removeAll()
-        transaction = nil
+        transactions.removeAll()
         
         NotificationCenter.default.post(name: transactionNotificationName, object: self)
     }
     
     func abort() {
-        collided = true
+        guard let last = transactions.last else {
+            return
+        }
+        
+        transactions.removeLast()
+        transactions.append(last.fail())
     }
     
     func retry(in delay: TimeInterval? = nil) {
-        if let delay = delay {
-            Thread.sleep(forTimeInterval: delay)
+        guard let last = transactions.last else {
+            return
         }
-
-        if let transaction = transaction {
-            perform(transaction)
-        }
+        
+        transactions.removeLast()
+        transactions.append(last.retry())
     }
     
 }

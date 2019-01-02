@@ -28,7 +28,7 @@ public final class Reference<Value>: Referenceable {
     private var value: Value
     
     private var barrier: Barrier {
-        return Thread.current.barrier!
+        return Thread.current.barrier
     }
     
     private var readers = AtomicLinkedList<Barrier>()
@@ -93,4 +93,12 @@ public final class Reference<Value>: Referenceable {
         }
     }
         
+}
+
+extension Reference: CustomDebugStringConvertible {
+    
+    public var debugDescription: String {
+        return "Ref(\(value))"
+    }
+    
 }

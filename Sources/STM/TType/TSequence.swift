@@ -14,7 +14,6 @@ extension Reference: Sequence where Value: Sequence {
     public typealias Element = Value.Element
     public typealias Iterator = Value.Iterator
     
-    
     public func makeIterator() -> Value.Iterator {
         return get().makeIterator()
     }

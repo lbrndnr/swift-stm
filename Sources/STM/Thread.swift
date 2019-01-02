@@ -12,9 +12,16 @@ private let currentBarrierKey = "ch.laurinbrandner.stm.current-barrier"
 
 extension Thread {
     
-    var barrier: Barrier? {
+    var barrier: Barrier {
         get {
-            return threadDictionary[currentBarrierKey] as? Barrier
+            guard let b = threadDictionary[currentBarrierKey] as? Barrier else {
+                let barrier = Barrier()
+                self.barrier = barrier
+                
+                return barrier
+            }
+            
+            return b
         }
         set {
             threadDictionary[currentBarrierKey] = newValue
