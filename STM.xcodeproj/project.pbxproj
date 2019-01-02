@@ -21,7 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		4925E1E321DCCDE400DE86F7 /* TCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E253D21DC251C002D0E30 /* TCollection.swift */; };
 		OBJ_105 /* BackoffIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* BackoffIterator.swift */; };
 		OBJ_106 /* Barrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* Barrier.swift */; };
 		OBJ_107 /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Identifiable.swift */; };
@@ -143,7 +142,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		496E253D21DC251C002D0E30 /* TCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCollection.swift; sourceTree = "<group>"; };
 		"AtomicLinkedList::AtomicLinkedList::Product" /* AtomicLinkedList.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AtomicLinkedList.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Atomics::Atomics::Product" /* Atomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Atomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Atomics::CAtomics::Product" /* CAtomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CAtomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -234,7 +232,6 @@
 				OBJ_15 /* Operators.swift */,
 				OBJ_16 /* TNumeric.swift */,
 				OBJ_17 /* TSequence.swift */,
-				496E253D21DC251C002D0E30 /* TCollection.swift */,
 			);
 			path = TType;
 			sourceTree = "<group>";
@@ -564,7 +561,6 @@
 			files = (
 				OBJ_105 /* BackoffIterator.swift in Sources */,
 				OBJ_106 /* Barrier.swift in Sources */,
-				4925E1E321DCCDE400DE86F7 /* TCollection.swift in Sources */,
 				OBJ_107 /* Identifiable.swift in Sources */,
 				OBJ_108 /* Reference.swift in Sources */,
 				OBJ_109 /* Signature.swift in Sources */,
