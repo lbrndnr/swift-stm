@@ -21,7 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		496E253E21DC251C002D0E30 /* TCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E253D21DC251C002D0E30 /* TCollection.swift */; };
+		4925E1E321DCCDE400DE86F7 /* TCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E253D21DC251C002D0E30 /* TCollection.swift */; };
 		OBJ_105 /* BackoffIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* BackoffIterator.swift */; };
 		OBJ_106 /* Barrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* Barrier.swift */; };
 		OBJ_107 /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Identifiable.swift */; };
@@ -564,6 +564,7 @@
 			files = (
 				OBJ_105 /* BackoffIterator.swift in Sources */,
 				OBJ_106 /* Barrier.swift in Sources */,
+				4925E1E321DCCDE400DE86F7 /* TCollection.swift in Sources */,
 				OBJ_107 /* Identifiable.swift in Sources */,
 				OBJ_108 /* Reference.swift in Sources */,
 				OBJ_109 /* Signature.swift in Sources */,
@@ -598,7 +599,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				496E253E21DC251C002D0E30 /* TCollection.swift in Sources */,
 				OBJ_57 /* AtomicIterator.swift in Sources */,
 				OBJ_58 /* AtomicLinkedList.swift in Sources */,
 				OBJ_59 /* AtomicStack.swift in Sources */,
