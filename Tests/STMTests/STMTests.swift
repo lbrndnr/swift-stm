@@ -10,20 +10,20 @@ import XCTest
 @testable import STM
 
 private let initialBalance = 1_000_000
-private let accounts = 100000
+private let accounts = 100_000
 private let transactions = 100_000
 
 class STMTests: XCTestCase {
     
-    var bank = Bank(accounts: [])
+    var bank = STMBank(accounts: [])
     var sum = 0
     
     override func setUp() {
         super.setUp()
         
-        let accs = (0 ..< accounts).map { Account(ID: $0, balance: initialBalance) }
+        let accs = (0 ..< accounts).map { STMAccount(ID: $0, balance: initialBalance) }
         
-        bank = Bank(accounts: accs)
+        bank = STMBank(accounts: accs)
         sum = accounts * initialBalance
     }
     

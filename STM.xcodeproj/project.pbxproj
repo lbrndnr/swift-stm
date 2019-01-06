@@ -21,6 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		49ADC6DF21E298AE00E44CEB /* DispatchBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49ADC6DE21E298AE00E44CEB /* DispatchBank.swift */; };
+		49ADC6E321E29BFB00E44CEB /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49ADC6E221E29BFB00E44CEB /* PerformanceTests.swift */; };
+		49ADC6E521E29C7900E44CEB /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49ADC6E421E29C7900E44CEB /* Bank.swift */; };
 		OBJ_105 /* BackoffIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* BackoffIterator.swift */; };
 		OBJ_106 /* Barrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* Barrier.swift */; };
 		OBJ_107 /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Identifiable.swift */; };
@@ -35,8 +38,7 @@
 		OBJ_117 /* Atomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "Atomics::Atomics::Product" /* Atomics.framework */; };
 		OBJ_118 /* CAtomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "Atomics::CAtomics::Product" /* CAtomics.framework */; };
 		OBJ_127 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
-		OBJ_138 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_22 /* Account.swift */; };
-		OBJ_139 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* Bank.swift */; };
+		OBJ_139 /* STMBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_23 /* STMBank.swift */; };
 		OBJ_140 /* STMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_24 /* STMTests.swift */; };
 		OBJ_141 /* XCTestManifests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_25 /* XCTestManifests.swift */; };
 		OBJ_143 /* STM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "STM::STM::Product" /* STM.framework */; };
@@ -47,7 +49,6 @@
 		OBJ_58 /* AtomicLinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_30 /* AtomicLinkedList.swift */; };
 		OBJ_59 /* AtomicStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* AtomicStack.swift */; };
 		OBJ_60 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* Node.swift */; };
-		OBJ_61 /* Ticket.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Ticket.swift */; };
 		OBJ_63 /* Atomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "Atomics::Atomics::Product" /* Atomics.framework */; };
 		OBJ_64 /* CAtomics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "Atomics::CAtomics::Product" /* CAtomics.framework */; };
 		OBJ_74 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_34 /* Package.swift */; };
@@ -142,6 +143,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		49ADC6DE21E298AE00E44CEB /* DispatchBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchBank.swift; sourceTree = "<group>"; };
+		49ADC6E221E29BFB00E44CEB /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
+		49ADC6E421E29C7900E44CEB /* Bank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
 		"AtomicLinkedList::AtomicLinkedList::Product" /* AtomicLinkedList.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AtomicLinkedList.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Atomics::Atomics::Product" /* Atomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Atomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		"Atomics::CAtomics::Product" /* CAtomics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CAtomics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -154,8 +158,7 @@
 		OBJ_17 /* TSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TSequence.swift; sourceTree = "<group>"; };
 		OBJ_18 /* Thread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
 		OBJ_19 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
-		OBJ_22 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
-		OBJ_23 /* Bank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
+		OBJ_23 /* STMBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STMBank.swift; sourceTree = "<group>"; };
 		OBJ_24 /* STMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STMTests.swift; sourceTree = "<group>"; };
 		OBJ_25 /* XCTestManifests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestManifests.swift; sourceTree = "<group>"; };
 		OBJ_29 /* AtomicIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicIterator.swift; sourceTree = "<group>"; };
@@ -247,9 +250,11 @@
 		OBJ_21 /* STMTests */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_22 /* Account.swift */,
-				OBJ_23 /* Bank.swift */,
+				49ADC6E421E29C7900E44CEB /* Bank.swift */,
+				49ADC6DE21E298AE00E44CEB /* DispatchBank.swift */,
+				OBJ_23 /* STMBank.swift */,
 				OBJ_24 /* STMTests.swift */,
+				49ADC6E221E29BFB00E44CEB /* PerformanceTests.swift */,
 				OBJ_25 /* XCTestManifests.swift */,
 			);
 			name = STMTests;
@@ -584,9 +589,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_138 /* Account.swift in Sources */,
-				OBJ_139 /* Bank.swift in Sources */,
+				OBJ_139 /* STMBank.swift in Sources */,
+				49ADC6DF21E298AE00E44CEB /* DispatchBank.swift in Sources */,
 				OBJ_140 /* STMTests.swift in Sources */,
+				49ADC6E521E29C7900E44CEB /* Bank.swift in Sources */,
+				49ADC6E321E29BFB00E44CEB /* PerformanceTests.swift in Sources */,
 				OBJ_141 /* XCTestManifests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -599,7 +606,6 @@
 				OBJ_58 /* AtomicLinkedList.swift in Sources */,
 				OBJ_59 /* AtomicStack.swift in Sources */,
 				OBJ_60 /* Node.swift in Sources */,
-				OBJ_61 /* Ticket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
